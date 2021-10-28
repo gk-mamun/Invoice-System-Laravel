@@ -29,6 +29,7 @@ class InvoiceController extends Controller
 
     public function readInvoices()
     {
+        $types = InvoiceType::all();
         $customerInvoices = CustomerInvoice::orderBy('created_at', 'desc')->get();
         $vendorInvoices = VendorInvoice::orderBy('created_at', 'desc')->get();
         
@@ -60,8 +61,13 @@ class InvoiceController extends Controller
                 <th>'. $invoice->pnr .'</th>
                 <th>'. $invoice->passenger .'</th>
                 <th>'. $invoice->travel_date .'</th>
-                <th>'. $invoice->type_id .'</th>
-                <th>
+                ';
+            foreach($types as $type) {
+                if ( $type->id == $invoice->type_id) {
+                    $html.= '<th>' . $type->title . '</td>';
+                }
+            }
+            $html .= '<th>
                     <button class="btn btn-success icon type-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-pencil-square"></i></button>
                     <button class="btn btn-danger icon type-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-trash-fill"></i></button>
                 </th>
@@ -100,8 +106,13 @@ class InvoiceController extends Controller
                 <th>'. $invoice->pnr .'</th>
                 <th>'. $invoice->passenger .'</th>
                 <th>'. $invoice->travel_date .'</th>
-                <th>'. $invoice->type_id .'</th>
-                <th>
+                ';
+            foreach($types as $type) {
+                if ( $type->id == $invoice->type_id) {
+                    $html.= '<th>' . $type->title . '</td>';
+                }
+            }
+            $html .= '<th>
                     <button class="btn btn-success icon type-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-pencil-square"></i></button>
                     <button class="btn btn-danger icon type-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-trash-fill"></i></button>
                 </th>
@@ -158,6 +169,7 @@ class InvoiceController extends Controller
         }
         $customer->type_id = $request->type;
         $customer->customer_id = $request->customer;
+        $customer->user_id = auth()->id();
         $customer->save();
 
         // create vendor invoice

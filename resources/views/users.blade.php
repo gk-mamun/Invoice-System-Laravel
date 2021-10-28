@@ -16,7 +16,7 @@
             <div class="page-heading">
                 <div class="divider divider-left">
                     <div class="divider-text" style="background: none;">
-                        <div class="page-heading" style="margin-bottom: 0px;"><h3>Customers</h3></div>
+                        <div class="page-heading" style="margin-bottom: 0px;"><h3>Users</h3></div>
                     </div>
                 </div>
             </div>

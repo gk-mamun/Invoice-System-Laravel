@@ -1,0 +1,22 @@
+.page-heading {
+    margin-bottom: 60px;
+}
+
+#customer-info-div {
+    position: relative;
+    padding-top: 80px;
+}
+
+#customer-info-div p {
+    margin-bottom: 3px;
+}
+
+#avatar {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    left: calc(50% - 60px);
+    top: -50px;
+    border: 5px solid #ddd;
+}

@@ -26,6 +26,7 @@ class CreateCustomerInvoicesTable extends Migration
             $table->decimal('total', 10, 2)->nullable();
             $table->foreignId('type_id')->onDelete('set null');
             $table->foreignId('customer_id')->onDelete('set null');
+            $table->foreignId('user_id')->onDelete('set null');
             $table->timestamps();
         });
     }

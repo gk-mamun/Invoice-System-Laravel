@@ -89,7 +89,7 @@
                             <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
                         </div>
 
-                        <form class="form form-vertical" id="create-customer-form">
+                        <form class="form form-vertical" id="create-customer-form" enctype="multipart/form-data">
                             <div class="modal-body">
                                 
                                 <div class="form-body">
@@ -98,7 +98,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label>Customer/Agency Name</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" placeholder="Customer name..." id="customer-name" required>
+                                                    <input type="text" class="form-control" placeholder="Customer name..." id="customer-name" name="customer_name" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-person"></i>
                                                     </div>
@@ -110,7 +110,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label>Email</label>
                                                 <div class="position-relative">
-                                                    <input type="email" class="form-control" placeholder="Email..." id="customer-email" required>
+                                                    <input type="email" class="form-control" placeholder="Email..." id="customer-email" name="customer_email" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-envelope"></i>
                                                     </div>
@@ -122,7 +122,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label>Mobile/Telephone</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" placeholder="Telephone..." id="customer-phone" required>
+                                                    <input type="text" class="form-control" placeholder="Telephone..." id="customer-phone" name="customer_phone" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-phone"></i>
                                                     </div>
@@ -134,7 +134,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label for="first-name-icon">Code</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" placeholder="Code..." id="customer-code" required>
+                                                    <input type="text" class="form-control" placeholder="Code..." id="customer-code" name="customer_code" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-lock"></i>
                                                     </div>
@@ -146,10 +146,20 @@
                                             <div class="form-group has-icon-left">
                                                 <label for="first-name-icon">Address</label>
                                                 <div class="position-relative">
-                                                    <textarea class="form-control" placeholder="Address..." id="customer-address" required></textarea>
+                                                    <textarea class="form-control" placeholder="Address..." id="customer-address" name="customer_address" required></textarea>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-building"></i>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Profile Picture (Optional)</label>
+                                                <div class="position-relative">
+                                                    <input type="file" class="form-control" id="avatar" name="avatar">
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -194,14 +204,14 @@
 
                         <form class="form form-vertical" id="update-customer-form">
                             <div class="modal-body">
-                                <input type="hidden" id="new-customer-id">
+                                <input type="hidden" id="new-customer-id" name="customer_id">
                                 <div class="form-body">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group has-icon-left">
                                                 <label>Customer/Agency Name</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" id="new-customer-name" required>
+                                                    <input type="text" class="form-control" id="new-customer-name" name="customer_name" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-person"></i>
                                                     </div>
@@ -213,7 +223,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label>Email</label>
                                                 <div class="position-relative">
-                                                    <input type="email" class="form-control" id="new-customer-email" required>
+                                                    <input type="email" class="form-control" id="new-customer-email" name="customer_email" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-envelope"></i>
                                                     </div>
@@ -225,7 +235,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label>Mobile/Telephone</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" id="new-customer-phone" required>
+                                                    <input type="text" class="form-control" id="new-customer-phone" name="customer_phone" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-phone"></i>
                                                     </div>
@@ -237,7 +247,7 @@
                                             <div class="form-group has-icon-left">
                                                 <label for="first-name-icon">Code</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" id="new-customer-code" required>
+                                                    <input type="text" class="form-control" id="new-customer-code" name="customer_code" required>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-lock"></i>
                                                     </div>
@@ -249,10 +259,20 @@
                                             <div class="form-group has-icon-left">
                                                 <label for="first-name-icon">Address</label>
                                                 <div class="position-relative">
-                                                    <textarea class="form-control" id="new-customer-address" required></textarea>
+                                                    <textarea class="form-control" id="new-customer-address" name="customer_address" required></textarea>
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-building"></i>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Profile Picture (Optional)</label>
+                                                <div class="position-relative">
+                                                    <input type="file" class="form-control" id="new-customer-avatar" name="avatar">
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -389,14 +409,10 @@
                 $.ajax({
                     url: "{{ route('update-customer') }}",
                     type: "POST",
-                    data: {
-                        newId: newCustomerId,
-                        newTitle: newCustomerTitle,
-                        newEmail: newCustomerEmail,
-                        newPhone: newCustomerPhone,
-                        newCode: newCustomerCode,
-                        newAddress: newCustomerAddress
-                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
                     beforeSend: function() {
                         loader.show();
                     },
@@ -483,23 +499,14 @@
                 e.preventDefault();
                 
                 var loader = $('#add-customer-form-loader');
-                var title = $('#customer-name').val();
-                var email = $('#customer-email').val();
-                var phone = $('#customer-phone').val();
-                var code = $('#customer-code').val();
-                var address = $('#customer-address').val();
-
 
                 $.ajax({
                     url: "{{ route('create-customer') }}",
                     type: "POST",
-                    data: {
-                        title,
-                        email,
-                        phone,
-                        code,
-                        address
-                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
                     beforeSend: function() {
                         loader.show();
                     },
@@ -509,6 +516,7 @@
                             $('#addNewCustomerModal').modal('hide');
                             showAlert("Customer is created successfully", "success");
                             readCustomers();
+                            console.log(data);
                         }, 500);
                         
                     }

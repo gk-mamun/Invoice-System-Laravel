@@ -66,7 +66,9 @@ class CustomerController extends Controller
     // Get Single Customer
     public function getSingleCustomer($id)
     {
-        return view('single-customer');
+        $customer = Customer::find($id);
+        
+        return view('single-customer', ['customer' => $customer]);
     }
 
     // Create Customer
@@ -74,19 +76,28 @@ class CustomerController extends Controller
     {
 
         $this->validate($request, [
-            'title' => 'required',
-            'email' => 'required',
-            'phone' => 'required',
-            'code' => 'required',
-            'address' => 'required',
+            'customer_name' => 'required',
+            'customer_email' => 'required',
+            'customer_phone' => 'required',
+            'customer_code' => 'required',
+            'customer_address' => 'required',
         ]);
 
         $customer = new Customer();
-        $customer->title = $request->title;
-        $customer->email = $request->email;
-        $customer->phone = $request->phone;
-        $customer->code = $request->code;
-        $customer->address = $request->address;
+
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $file_name = time() . '_' . 'avatar.' . $file->extension();
+            $file->move(public_path('images/customers'), $file_name);
+
+            $customer->avatar = $file_name;
+        }
+
+        $customer->title = $request->customer_name;
+        $customer->email = $request->customer_email;
+        $customer->phone = $request->customer_phone;
+        $customer->code = $request->customer_code;
+        $customer->address = $request->customer_address;
         $customer->save();
 
     }
@@ -103,20 +114,28 @@ class CustomerController extends Controller
     public function updateCustomer(Request $request)
     {
         $this->validate($request, [
-            'newId' => 'required',
-            'newTitle' => 'required',
-            'newEmail' => 'required',
-            'newPhone' => 'required',
-            'newCode' => 'required',
-            'newAddress' => 'required',
+            'customer_name' => 'required',
+            'customer_email' => 'required',
+            'customer_phone' => 'required',
+            'customer_code' => 'required',
+            'customer_address' => 'required',
         ]);
 
-        $customer = Customer::find($request->newId);
-        $customer->title = $request->newTitle;
-        $customer->email = $request->newEmail;
-        $customer->phone = $request->newPhone;
-        $customer->code = $request->newCode;
-        $customer->address = $request->newAddress;
+        $customer = Customer::find($request->customer_id);
+        $customer->title = $request->customer_name;
+        $customer->email = $request->customer_email;
+        $customer->phone = $request->customer_phone;
+        $customer->code = $request->customer_code;
+        $customer->address = $request->customer_address;
+
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $file_name = time() . '_' . 'avatar.' . $file->extension();
+            $file->move(public_path('images/customers'), $file_name);
+
+            $customer->avatar = $file_name;
+        }
+        
         $customer->save();
 
     }
