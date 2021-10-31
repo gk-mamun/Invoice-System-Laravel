@@ -3,6 +3,6 @@
 
 @section('sidebar')
 
-    <
+    
     
 @endsection

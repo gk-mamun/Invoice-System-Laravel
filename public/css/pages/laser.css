@@ -1,0 +1,93 @@
+#laser-container {
+    width: 900px;
+    margin: auto;
+}
+
+#laser .laser-header {
+    position: relative;
+    min-height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#laser .laser-header .company-info h1 {
+    font-size: 44px;
+}
+
+#laser .logo-container {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 130px;
+    height: 130px;
+}
+
+#laser .logo-container img {
+    width: 100%;
+}
+
+#laser-body .laser-body-inner-container {
+    border: 1px solid #25396f;
+    margin-bottom: 20px;
+}
+
+#laser-body .laser-receiver-inner {
+    display: grid;
+    grid-template-columns: 60% 40%;
+}
+
+#laser-body .laser-inner-row {
+    display: grid;
+    grid-template-columns: 100px auto;
+    grid-gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#laser-body .laser-inner-row h6,
+#laser-body .laser-inner-row p {
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#laser-body .laser-inner-row p {
+    color: #000;
+}
+
+#laser-body #laser-data-table thead th {
+    border: 1px solid #25396f!important;
+    background-color: #f4f4f4;
+    padding: 20px 10px;
+    color: #25396f;
+}
+
+#laser-body #laser-data-table tbody td {
+    border-left: 1px solid #25396f !important;
+    border-right: 1px solid #25396f !important;
+    padding: 20px 10px;
+    color: #000;
+}
+
+#row-total td {
+    border-top: 1px solid #25396f !important;
+    border-bottom: 1px solid #25396f !important;
+    color: #25396f;
+    font-weight: bold;
+}
+
+#row-total td:first-child {
+    text-align: right;
+    padding-right: 30px !important;
+}
+
+#total-amount td {
+    border-bottom: 1px solid #25396f !important;
+    color: #25396f;
+    font-weight: bold;
+}
+
+#total-amount td:first-child {
+    text-align: right;
+}

@@ -3,6 +3,7 @@
 @push('stylesheets')
     <link rel="stylesheet" href="{{ asset('vendors/simple-datatables/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages/customer.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/laser.css') }}">
 @endpush
 
 @section('content')
@@ -45,37 +46,90 @@
                                 </div>
                             </div>
                         </div>
+
+                        <section class="section">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form action="" id="create-customer-lazer-form">
+                                        <div class="row">
+                                            <input type="hidden" name="receiver_id" value="{{ $customer->id }}">
+                                            <input type="hidden" name="receiver" value="customer">
+                                            <div class="col-lg-4 mb-1">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-calendar3-range-fill"></i></span>
+                                                    <input type="date" class="form-control" name="start_date" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 mb-1">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-calendar3-range-fill"></i></span>
+                                                    <input type="date" class="form-control" name="end_date" required>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-lg-4 mb-1">
+                                                <div class="input-group">
+                                                    <input type="submit" class="btn btn-primary" value="Create Laser" style="width: 100%;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </section>
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="laser-generate-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <div class="p-3 text-center" id="pdf-generate-btn-container" style="display: none">
+                            <button id="pdf-generate-btn" onclick="getPDF()" class="btn btn-primary">Download PDF</button>
+                        </div>
+
+                        <section class="section" id="laser-container">
+                            
+                        </section>
                        
                         <section class="section">
                             <div class="card">
-                                <div class="card-header">
-                                    Simple Datatable
-                                </div>
                                 <div class="card-body">
-                                    <table class="table table-striped" id="table1">
-                                        <thead>
-                                            <tr>
-                                                <th>Doc No</th>
-                                                <th>Passport</th>
-                                                <th>Ticket</th>
-                                                <th>Passenger Name</th>
-                                                <th>Travel Date</th>
-                                                <th>Fare</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($customer->invoices as $invoice)
+                                    @if(count($customer->invoices) > 0)
+                                        <table class="table table-striped" id="table1">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ $invoice->doc_no }}</td>
-                                                    <td>{{ $invoice->passport }}</td>
-                                                    <td>{{ $invoice->ticket }}</td>
-                                                    <td>{{ $invoice->passenger }}</td>
-                                                    <td>{{ $invoice->travel_date }}</td>
-                                                    <td>{{ $invoice->fare }}</td>
+                                                    <th>Doc No</th>
+                                                    <th>Passport</th>
+                                                    <th>Ticket</th>
+                                                    <th>Passenger Name</th>
+                                                    <th>Travel Date</th>
+                                                    <th>Fare</th>
+                                                    <th>Credit</th>
+                                                    <th>Balance</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                
+                                                    @foreach ($customer->invoices as $invoice)
+                                                        <tr>
+                                                            <td>{{ $invoice->doc_no }}</td>
+                                                            <td>{{ $invoice->passport }}</td>
+                                                            <td>{{ $invoice->ticket }}</td>
+                                                            <td>{{ $invoice->passenger }}</td>
+                                                            <td>{{ $invoice->travel_date }}</td>
+                                                            <td>{{ $invoice->fare }}</td>
+                                                            <td>{{ $invoice->credit }}</td>
+                                                            <td>{{ $invoice->total }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <div class="pt-4 pb-2">
+                                            <p class="text-center">There is no invoice for this vendor.</p>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
         
@@ -85,17 +139,7 @@
                 </section>
             </div>
 
-            <footer>
-                <div class="footer clearfix mb-0 text-muted">
-                    <div class="float-start">
-                        <p>2021 &copy; Mazer</p>
-                    </div>
-                    <div class="float-end">
-                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="#">A. Saugi</a></p>
-                    </div>
-                </div>
-            </footer>
+            @include('footer')
 
 
             <!-- Add New Customer Modal -->
@@ -221,10 +265,97 @@
 @endsection   
 
 @push('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('vendors/simple-datatables/simple-datatables.js') }}"></script>
+    <script src="{{ asset('js/html2pdf.bundle.min.js') }}"></script>
     <script>
         // Simple Datatable
         let table1 = document.querySelector('#table1');
         let dataTable = new simpleDatatables.DataTable(table1);
+    </script>
+    <script>
+         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+            });
+
+            var createLaserForm = $('#create-customer-lazer-form');
+
+            createLaserForm.on('submit', function(e) {
+                e.preventDefault();
+
+                var loader = $('#laser-generate-loader');
+
+                $.ajax({
+                    url: "{{ route('generate-laser') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#laser-container').html(data);
+                            $('#pdf-generate-btn-container').show();
+                        }, 500);
+                        
+                    }
+                });
+
+            });
+
+
+         });
+    </script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script> --}}
+    <script src="{{ asset('js/jspdf.min.js') }}"></script>
+    <script src="{{ asset('js/html2canvas.js') }}"></script>
+    <script>
+        	function getPDF(){
+
+                var HTML_Width = $("#laser-container").width();
+                var HTML_Height = $("#laser-container").height();
+                var top_left_margin = 15;
+                var PDF_Width = HTML_Width+(top_left_margin*2);
+                var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
+                var canvas_image_width = HTML_Width;
+                var canvas_image_height = HTML_Height;
+
+                var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
+
+
+                html2canvas($("#laser-container")[0],{allowTaint:true}).then(function(canvas) {
+                    canvas.getContext('2d');
+                    
+                    
+                    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                    var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
+                    
+                    
+                    for (var i = 1; i <= totalPDFPages; i++) { 
+                        pdf.addPage(PDF_Width, PDF_Height);
+                        pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+                    }
+                    
+                    var customerName = "{{ $customer->title }}";
+                    var t = new Date();
+                    var d = t.getDay();
+                    var m = t.getMonth();
+                    var y = t.getFullYear()
+
+                    var fileName = customerName + '_' + d + '_' + m + '_' + y + '.pdf'  
+
+                    pdf.save(fileName);
+                });
+
+            };
     </script>
 @endpush

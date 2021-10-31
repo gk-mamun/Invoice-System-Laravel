@@ -33,7 +33,7 @@
                                 <!-- button trigger for  Add new invoice type modal -->
                                 <button type="button" class="btn btn-outline-primary block float-end"
                                 data-bs-toggle="modal" data-bs-target="#createUserModal">
-                                Create New Customer
+                                Create New User
                                 </button>
                             </div>
                         </div>
@@ -58,17 +58,7 @@
                 </section>
             </div>
 
-            <footer>
-                <div class="footer clearfix mb-0 text-muted">
-                    <div class="float-start">
-                        <p>2021 &copy; Lazer</p>
-                    </div>
-                    <div class="float-end">
-                        <p>Developed <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="#">gk mamun</a></p>
-                    </div>
-                </div>
-            </footer>
+            @include('footer')
 
 
             <!-- Create User Modal -->
@@ -174,7 +164,7 @@
             </div>
 
 
-            <!-- Delete Customer Modal -->
+            <!-- Delete User Modal -->
             <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"

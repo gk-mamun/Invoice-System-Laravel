@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\InvoiceType;
 use App\Models\Customer;
+use App\Models\Vendor;
 use App\Models\CustomerInvoice;
 use App\Models\VendorInvoice;
 
@@ -19,10 +20,12 @@ class InvoiceController extends Controller
     public function index()
     {
         $customers = Customer::all();
+        $vendors = Vendor::all();
         $types = InvoiceType::all();
 
         return view('invoices', [
             'customers' => $customers,
+            'vendors' => $vendors,
             'types' => $types
         ]);
     }

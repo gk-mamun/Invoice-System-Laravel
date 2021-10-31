@@ -23,6 +23,7 @@ class CreateVendorInvoicesTable extends Migration
             $table->string('sector');
             $table->string('travel_date');
             $table->decimal('fare', 10, 2);
+            $table->decimal('credit', 10, 2)->default(0.00);
             $table->decimal('total', 10, 2)->nullable();
             $table->foreignId('type_id')->onDelete('set null');
             $table->foreignId('vendor_id')->onDelete('set null');

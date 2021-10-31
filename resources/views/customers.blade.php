@@ -58,18 +58,7 @@
                 </section>
             </div>
 
-            <footer>
-                <div class="footer clearfix mb-0 text-muted">
-                    <div class="float-start">
-                        <p>2021 &copy; Mazer</p>
-                    </div>
-                    <div class="float-end">
-                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="#">A. Saugi</a></p>
-                    </div>
-                </div>
-            </footer>
-
+            @include('footer')
 
             <!-- Add New Customer Modal -->
             <div class="modal fade" id="addNewCustomerModal" tabindex="-1" role="dialog"
@@ -218,7 +207,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
+ 
                                         <div class="col-12">
                                             <div class="form-group has-icon-left">
                                                 <label>Email</label>
@@ -399,13 +388,7 @@
                 e.preventDefault();
 
                 var loader = $('#update-customer-form-loader');
-                var newCustomerId = $('#new-customer-id').val();
-                var newCustomerTitle = $('#new-customer-name').val();
-                var newCustomerEmail = $('#new-customer-email').val();
-                var newCustomerPhone = $('#new-customer-phone').val();
-                var newCustomerCode = $('#new-customer-code').val();
-                var newCustomerAddress = $('#new-customer-address').val();
-
+                
                 $.ajax({
                     url: "{{ route('update-customer') }}",
                     type: "POST",
@@ -470,7 +453,7 @@
             });
 
 
-            // Read all invoice types
+            // Read all customers
             function readCustomers() {
                 $.ajax({
                     url: "{{ route('read-customers') }}",

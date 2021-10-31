@@ -10,6 +10,7 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LaserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,7 @@ Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
 // Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/home', [DashboardController::class, 'index'])->name('home');
+Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 Route::get('/types', [TypeController::class, 'index'])->name('types');
 Route::get('/read-types', [TypeController::class, 'readTypes'])->name('read-invoice-types');
@@ -47,20 +48,19 @@ Route::post('/delete-customer', [CustomerController::class, 'deleteCustomer'])->
 
 Route::get('/our-vendors', [VendorController::class, 'index'])->name('vendors');
 Route::get('/our-vendors/{id}', [VendorController::class, 'getSingleVendor'])->name('single-vendor');
+Route::post('/create-vendor', [VendorController::class, 'store'])->name('create-vendor');
+Route::get('/read-vendors', [VendorController::class, 'readVendors'])->name('read-vendor');
+Route::get('/single-vendor/{id}', [VendorController::class, 'getVendorToUpdate'])->name('get-single-vendor-to-update');
+Route::post('/update-vendor', [VendorController::class, 'updateVendor'])->name('update-vendor');
+Route::post('/delete-vendor', [VendorController::class, 'deleteVendor'])->name('delete-vendor');
 
 Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices');
 Route::get('/read-invoices', [InvoiceController::class, 'readInvoices'])->name('read-invoice');
 Route::post('/invoices', [InvoiceController::class, 'storeInvoice'])->name('create-invoice');
-
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::post('/users', [UserController::class, 'createUser'])->name('create-user');
 Route::get('/read-users', [UserController::class, 'readUser'])->name('read-users');
 Route::post('/delete-user', [UserController::class, 'deleteUser'])->name('delete-user');
 
-
-
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::post('/generate-laser', [LaserController::class, 'generateLaser'])->name('generate-laser');

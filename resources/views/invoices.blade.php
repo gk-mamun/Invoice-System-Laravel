@@ -57,17 +57,7 @@
                 </section>
             </div>
 
-            <footer>
-                <div class="footer clearfix mb-0 text-muted">
-                    <div class="float-start">
-                        <p>2021 &copy; Mazer</p>
-                    </div>
-                    <div class="float-end">
-                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="#">A. Saugi</a></p>
-                    </div>
-                </div>
-            </footer>
+            @include('footer')
 
         
             <!-- Add New Invoice Modal -->
@@ -185,10 +175,9 @@
                                                 <label>Vendor</label>
                                                 <select class="choices form-select" id="vendor" required>
                                                     <option selected disabled>Select Vendor</option>
-                                                    <option value="1">Square</option>
-                                                    <option value="2">Rectangle</option>
-                                                    <option value="3">Rombo</option>
-                                                    <option value="3">Romboid</option>
+                                                    @foreach ($vendors as $vendor)
+                                                        <option value="{{ $vendor->id }}">{{ $vendor->title }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -395,6 +384,7 @@
                             $('#addNewInvoiceModal').modal('hide');
                             showAlert("Invoice is created successfully", "success");
                             readInvoices();
+                            createInvoiceForm.trigger("reset");
                         }, 500);
                         
                     }
