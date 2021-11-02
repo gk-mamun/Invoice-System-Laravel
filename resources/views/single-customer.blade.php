@@ -98,28 +98,37 @@
                                         <table class="table table-striped" id="table1">
                                             <thead>
                                                 <tr>
+                                                    <th>Date</th>
                                                     <th>Doc No</th>
                                                     <th>Passport</th>
                                                     <th>Ticket</th>
                                                     <th>Passenger Name</th>
                                                     <th>Travel Date</th>
+                                                    <th>Status</th>
                                                     <th>Fare</th>
                                                     <th>Credit</th>
                                                     <th>Balance</th>
+                                                    <th style="min-width: 100px;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 
                                                     @foreach ($customer->invoices as $invoice)
                                                         <tr>
+                                                            <td>{{ date_format(date_create($invoice->created_at),"d/m/Y") }}</td>
                                                             <td>{{ $invoice->doc_no }}</td>
                                                             <td>{{ $invoice->passport }}</td>
                                                             <td>{{ $invoice->ticket }}</td>
                                                             <td>{{ $invoice->passenger }}</td>
                                                             <td>{{ $invoice->travel_date }}</td>
+                                                            <td>{{ $invoice->status }}</td>
                                                             <td>{{ $invoice->fare }}</td>
                                                             <td>{{ $invoice->credit }}</td>
                                                             <td>{{ $invoice->total }}</td>
+                                                            <td>
+                                                                <button class="btn btn-success icon invoice-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="{{ $invoice->id }}" data-customerid="{{ $customer->id }}"><i class="bi bi-pencil-square"></i></button>
+                                                                <button class="btn btn-danger icon invoice-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="{{ $invoice->id }}"  data-customerid="{{ $customer->id }}"><i class="bi bi-trash-fill"></i></button>
+                                                            </td>
                                                         </tr>
                                                     @endforeach
                                                 
@@ -142,35 +151,111 @@
             @include('footer')
 
 
-            <!-- Add New Customer Modal -->
-            <div class="modal fade" id="addNewCustomerModal" tabindex="-1" role="dialog"
+            <!-- Edit InVoice Modal -->
+            <div class="modal fade" id="editInvoiceModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
                     role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Add New Customer</h5>
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Update Invoice/Laser</h5>
                             <button type="button" class="close" data-bs-dismiss="modal"
                                 aria-label="Close">
                                 <i data-feather="x"></i>
                             </button>
                         </div>
-                        <form class="form form-vertical">
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="update-invoice-form-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <form class="form form-vertical" id="update-invoice-form">
                             <div class="modal-body">
                                 
                                 <div class="form-body">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="first-name-vertical">Type</label>
-                                                <input type="text" id="inoice-type"
-                                                    class="form-control" name="invoice_type"
-                                                    placeholder="Invoice type...">
+                                                <label>Doc No.</label>
+                                                <input type="text" class="form-control" id="doc-no" name="doc_no" placeholder="Document no..." disabled required>
                                             </div>
                                         </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Passport No.</label>
+                                                <input type="text" class="form-control" id="passport" name="passport" placeholder="Passport no...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Ticket</label>
+                                                <input type="text" class="form-control" id="ticket" name="ticket" placeholder="Ticket...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>PNR</label>
+                                                <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Passenger Name</label>
+                                                <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Sector</label>
+                                                <input type="text" class="form-control" id="sector" name="sector" placeholder="Sector...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Travel Date</label>
+                                                <input type="date" class="form-control" id="travel-date" name="travel_date" placeholder="Travel Date...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Fare</label>
+                                                <input type="text" class="form-control" id="fare" name="fare" placeholder="Fare..." required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Status</label>
+                                                <input type="text" class="form-control" id="status" name="status" placeholder="Status...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Invoice Type</label>
+                                                <select class="choices form-select" id="type" name="type" required>
+                                                    <option selected disabled>Choose Invoice type</option>
+                                                    @foreach ($types as $type)
+                                                        <option value="{{ $type->id }}">{{ $type->title }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        
                                     </div>
                                 </div>
-                                
+
+                                <input type="hidden" id="edit-invoice-id" name="edit_invoice_id">
+                                <input type="hidden" name="customer_id" value="{{ $customer->id }}">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary"
@@ -178,7 +263,7 @@
                                     <i class="bx bx-x d-block d-sm-none"></i>
                                     <span class="d-none d-sm-block">Close</span>
                                 </button>
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Update</button>
                             </div>
                         </form>
                     </div>
@@ -186,52 +271,8 @@
             </div>
 
 
-            <!-- Edit Customer Modal -->
-            <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
-                    role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Edit Customer</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <i data-feather="x"></i>
-                            </button>
-                        </div>
-                        <form class="form form-vertical">
-                            <div class="modal-body">
-                                
-                                <div class="form-body">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label for="first-name-vertical">Type</label>
-                                                <input type="text" id="inoice-type"
-                                                    class="form-control" name="invoice_type"
-                                                    placeholder="Invoice type...">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light-secondary"
-                                    data-bs-dismiss="modal">
-                                    <i class="bx bx-x d-block d-sm-none"></i>
-                                    <span class="d-none d-sm-block">Close</span>
-                                </button>
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Delete Customer Modal -->
-            <div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog"
+            <!--Delete Invoice Modal -->
+            <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
                     role="document">
@@ -243,8 +284,14 @@
                                 <i data-feather="x"></i>
                             </button>
                         </div>
-                        <form class="form form-vertical">
-                            <input type="text" value=":type_id">
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="delete-type-form-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <form class="form form-vertical" id="delete-type-modal">
+                            <input type="hidden" id="delete-type-id">
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary"
                                     data-bs-dismiss="modal">
@@ -307,6 +354,67 @@
                         
                     }
                 });
+
+            });
+
+
+            $('.invoice-update-btn').click(function() {
+                var invoiceId = $(this).data('id');
+                var invoiceCustomerId = $(this).data('customerid');
+
+                $.ajax({
+                    url: "{{ route('get-customer-single-invoice-data') }}",
+                    type: "POST",
+                    data: {
+                        invoiceId,
+                        invoiceCustomerId,
+                    },
+                    success: function(data) {
+                        console.log(data.id);
+                        $('#edit-invoice-id').val(data.id);
+                        $('#doc-no').val(data.doc_no);
+                        $('#passport').val(data.passport);
+                        $('#ticket').val(data.ticket);
+                        $('#pnr').val(data.pnr);
+                        $('#passenger').val(data.passenger);
+                        $('#sector').val(data.sector);
+                        $('#travel-date').val(data.travel_date);
+                        $('#fare').val(data.fare);
+                        $('#status').val(data.status);
+                        $("#type").val(data.type_id);
+                    }
+                })
+            });
+
+            var updateInvoiceForm = $('#update-invoice-form');
+
+            updateInvoiceForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                var loader = $('#update-invoice-form-loader');
+
+                $.ajax({
+                    url: "{{ route('update-customer-invoice') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        // setTimeout(function() {
+                        //     loader.hide();
+                        //     $('#editInvoiceModal').modal('hide');
+                        //     showAlert("Invoice is updated successfully", "success");
+                        //     // readInvoices();
+                        //     updateInvoiceForm.trigger("reset");
+                        // }, 500);
+                        console.log(data);
+                    }
+                });
+
 
             });
 

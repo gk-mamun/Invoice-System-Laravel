@@ -30,6 +30,7 @@ class InvoiceController extends Controller
         ]);
     }
 
+    // Read all invoice
     public function readInvoices()
     {
         $types = InvoiceType::all();
@@ -48,7 +49,6 @@ class InvoiceController extends Controller
                     <th>Passenger</th>
                     <th>Travel Date</th>
                     <th>Type</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,13 +70,7 @@ class InvoiceController extends Controller
                     $html.= '<th>' . $type->title . '</td>';
                 }
             }
-            $html .= '<th>
-                    <button class="btn btn-success icon type-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger icon type-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-trash-fill"></i></button>
-                </th>
-            </tr>
-            ';
-           
+            
         }
 
         $html .= '
@@ -95,7 +89,6 @@ class InvoiceController extends Controller
                     <th>Passenger</th>
                     <th>Travel Date</th>
                     <th>Type</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -115,12 +108,6 @@ class InvoiceController extends Controller
                     $html.= '<th>' . $type->title . '</td>';
                 }
             }
-            $html .= '<th>
-                    <button class="btn btn-success icon type-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger icon type-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="'. $invoice->id .'"><i class="bi bi-trash-fill"></i></button>
-                </th>
-            </tr>
-            ';
             
         }
 
@@ -136,20 +123,6 @@ class InvoiceController extends Controller
     // Create invoice for both customer & vendor
     public function storeInvoice(Request $request)
     {
-        $this->validate($request, [
-            'docNo' => 'required',
-            'passport' => 'required',
-            'ticket' => 'required',
-            'pnr' => 'required',
-            'passenger' => 'required',
-            'sector' => 'required',
-            'travelDate' => 'required',
-            'purchasedFare' => 'required',
-            'sellingFare' => 'required',
-            'type' => 'required',
-            'customer' => 'required',
-            'vendor' => 'required',
-        ]);
 
         $last_customer_invoice = CustomerInvoice::where('customer_id', '=', $request->customer)->latest()->first();;
         $last_vendor_invoice = VendorInvoice::where('vendor_id', '=', $request->vendor)->latest()->first();;
@@ -196,5 +169,34 @@ class InvoiceController extends Controller
         $vendor->save();
 
 
+    }
+
+
+    // Get last document
+    public function getLastInvoiceDocNo() 
+    {
+        $lastInvoice = CustomerInvoice::orderBy('created_at', 'desc')->first();
+
+        if($lastInvoice != '') {
+            $codeStr = substr($lastInvoice->doc_no, 3);
+            $increment = $codeStr + 1;
+            if(strlen($increment) == 1) {
+                $code = '000' . $increment;
+            }
+            else if(strlen($increment) == 2) {
+                $code = '00' . $increment;
+            }
+            else if(strlen($increment) == 3) {
+                $code = '0' . $increment;
+            }
+            else {
+                $code = $increment;
+            }
+        }
+        else {
+            $code = '0001';
+        }
+        
+        return $code;
     }
 }

@@ -11,6 +11,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LaserController;
+use App\Http\Controllers\CustomerInvoiceController;
+use App\Http\Controllers\VendorInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,10 +59,16 @@ Route::post('/delete-vendor', [VendorController::class, 'deleteVendor'])->name('
 Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices');
 Route::get('/read-invoices', [InvoiceController::class, 'readInvoices'])->name('read-invoice');
 Route::post('/invoices', [InvoiceController::class, 'storeInvoice'])->name('create-invoice');
+Route::get('/get-last-invoice-doc-no', [InvoiceController::class, 'getLastInvoiceDocNo'])->name('get-last-invoice-doc-no');
+
+Route::post('/get-customer-single-invoice-data', [CustomerInvoiceController::class, 'getSingleInvoiceData'])->name('get-customer-single-invoice-data');
+Route::post('/update-customer-invoice', [CustomerInvoiceController::class, 'updateCustomerInvoice'])->name('update-customer-invoice');
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::post('/users', [UserController::class, 'createUser'])->name('create-user');
 Route::get('/read-users', [UserController::class, 'readUser'])->name('read-users');
 Route::post('/delete-user', [UserController::class, 'deleteUser'])->name('delete-user');
+Route::get('/setting', [UserController::class, 'showSetting'])->name('setting');
+Route::get('/get-user-data', [UserController::class, 'getUserData'])->name('get-user-data');
 
 Route::post('/generate-laser', [LaserController::class, 'generateLaser'])->name('generate-laser');

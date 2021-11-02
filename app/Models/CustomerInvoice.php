@@ -11,13 +11,6 @@ class CustomerInvoice extends Model
 
 
     protected $fillable = [
-        'doc_no',
-        'passport',
-        'ticket',
-        'pnr',
-        'passenger',
-        'sector',
-        'travel_date',
         'fare',
         'total',
         'type_id',

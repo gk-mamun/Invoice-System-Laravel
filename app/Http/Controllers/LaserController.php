@@ -139,9 +139,9 @@ class LaserController extends Controller
                 ';  
                 $totalFare += $invoice->fare;
                 $totalCredit += $invoice->credit;
-                $totalBalance += $invoice->total;
+                
             }
-                                
+            $totalBalance = $totalFare - $totalCredit;                  
                                         
             $html .= '                      <tr id="row-total">
                                                 <td colspan="5">Total</td>

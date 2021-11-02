@@ -305,7 +305,7 @@
                         </div>
 
                         <form class="form form-vertical" id="delete-customer-modal">
-                            <input type="text" id="delete-customer-id">
+                            <input type="hidden" id="delete-customer-id">
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary"
                                     data-bs-dismiss="modal">
@@ -498,8 +498,8 @@
                             loader.hide();
                             $('#addNewCustomerModal').modal('hide');
                             showAlert("Customer is created successfully", "success");
+                            createCustomerForm.trigger("reset");
                             readCustomers();
-                            console.log(data);
                         }, 500);
                         
                     }

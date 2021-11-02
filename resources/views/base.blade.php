@@ -93,10 +93,19 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item {{ (request()->is('users')) ? 'active' : '' }}">
-                            <a href="{{ route('users') }}" class='sidebar-link'>
-                                <i class="bi bi-person-square"></i>
-                                <span>Users</span>
+                        @if(auth()->user()->role == 'admin') 
+                            <li class="sidebar-item {{ (request()->is('users')) ? 'active' : '' }}">
+                                <a href="{{ route('users') }}" class='sidebar-link'>
+                                    <i class="bi bi-person-square"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        <li class="sidebar-item {{ (request()->is('setting')) ? 'active' : '' }}">
+                            <a href="{{ route('setting') }}" class='sidebar-link'>
+                                <i class="bi bi-gear"></i>
+                                <span>Setting</span>
                             </a>
                         </li>
 

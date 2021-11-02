@@ -16,13 +16,14 @@ class CreateVendorInvoicesTable extends Migration
         Schema::create('vendor_invoices', function (Blueprint $table) {
             $table->id();
             $table->string('doc_no');
-            $table->string('passport');
-            $table->string('ticket');
-            $table->string('pnr');
-            $table->string('passenger');
-            $table->string('sector');
-            $table->string('travel_date');
-            $table->decimal('fare', 10, 2);
+            $table->string('passport')->nullable();
+            $table->string('ticket')->nullable();
+            $table->string('pnr')->nullable();
+            $table->string('passenger')->nullable();
+            $table->string('sector')->nullable();
+            $table->string('travel_date')->nullable();
+            $table->decimal('fare', 10, 2)->nullable();
+            $table->string('status')->nullable();
             $table->decimal('credit', 10, 2)->default(0.00);
             $table->decimal('total', 10, 2)->nullable();
             $table->foreignId('type_id')->onDelete('set null');

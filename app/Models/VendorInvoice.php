@@ -10,13 +10,6 @@ class VendorInvoice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'doc_no',
-        'passport',
-        'ticket',
-        'pnr',
-        'passenger',
-        'sector',
-        'travel_date',
         'fare',
         'total',
         'type_id',

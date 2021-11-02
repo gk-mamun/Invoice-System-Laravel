@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Models\InvoiceType;
 
 class CustomerController extends Controller
 {
@@ -67,8 +68,12 @@ class CustomerController extends Controller
     public function getSingleCustomer($id)
     {
         $customer = Customer::find($id);
+        $types = InvoiceType::all();
         
-        return view('single-customer', ['customer' => $customer]);
+        return view('single-customer', [
+            'customer' => $customer,
+            'types' => $types,
+        ]);
     }
 
     // Create Customer

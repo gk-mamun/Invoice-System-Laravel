@@ -30,7 +30,7 @@
                         <div class="row mb-3">
                             <div class="col-12">
                                 <!-- button trigger for  Add new invoice type modal -->
-                                <button type="button" class="btn btn-outline-primary block float-end"
+                                <button type="button" class="btn btn-outline-primary block float-end add-new-invoice-btn"
                                 data-bs-toggle="modal" data-bs-target="#addNewInvoiceModal">
                                 Create New Invoice
                                 </button>
@@ -86,49 +86,49 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>Doc No.</label>
-                                                <input type="text" class="form-control" id="doc-no" placeholder="Document no..." required>
+                                                <input type="text" class="form-control" id="doc-no" placeholder="Document no..." disabled required>
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>Passport No.</label>
-                                                <input type="text" class="form-control" id="passport" placeholder="Passport no..." required>
+                                                <input type="text" class="form-control" id="passport" placeholder="Passport no...">
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>Ticket</label>
-                                                <input type="text" class="form-control" id="ticket" placeholder="Ticket..." required>
+                                                <input type="text" class="form-control" id="ticket" placeholder="Ticket...">
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>PNR</label>
-                                                <input type="text" class="form-control" id="pnr" placeholder="PNR..." required>
+                                                <input type="text" class="form-control" id="pnr" placeholder="PNR...">
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>Passenger Name</label>
-                                                <input type="text" class="form-control" id="passenger" placeholder="Passenger Name..." required>
+                                                <input type="text" class="form-control" id="passenger" placeholder="Passenger Name...">
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>Sector</label>
-                                                <input type="text" class="form-control" id="sector" placeholder="Sector..." required>
+                                                <input type="text" class="form-control" id="sector" placeholder="Sector...">
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>Travel Date</label>
-                                                <input type="date" class="form-control" id="travel-date" placeholder="Travel Date..." required>
+                                                <input type="date" class="form-control" id="travel-date" placeholder="Travel Date...">
                                             </div>
                                         </div>
 
@@ -199,91 +199,6 @@
                     </div>
                 </div>
             </div>
-
-
-            <!-- Edit InVoice Modal -->
-            <div class="modal fade" id="editTypeModal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
-                    role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Update Type of Invoice/Laser</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <i data-feather="x"></i>
-                            </button>
-                        </div>
-
-                        {{-- Loader --}}
-                        <div class="p-2 text-center" id="update-type-form-loader" style="display: none;">
-                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
-                        </div>
-
-                        <form class="form form-vertical" id="update-type-form">
-                            <div class="modal-body">
-                                
-                                <div class="form-body">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label for="first-name-vertical">Type</label>
-                                                <input type="text" id="new-invoice-type"
-                                                    class="form-control" name="invoice_type"
-                                                    placeholder="Invoice type..." required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="new-invoice-id">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light-secondary"
-                                    data-bs-dismiss="modal">
-                                    <i class="bx bx-x d-block d-sm-none"></i>
-                                    <span class="d-none d-sm-block">Close</span>
-                                </button>
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
-            <!--Delete Invoice Modal -->
-            <div class="modal fade" id="deleteTypeModal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
-                    role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <i data-feather="x"></i>
-                            </button>
-                        </div>
-
-                        {{-- Loader --}}
-                        <div class="p-2 text-center" id="delete-type-form-loader" style="display: none;">
-                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
-                        </div>
-
-                        <form class="form form-vertical" id="delete-type-modal">
-                            <input type="hidden" id="delete-type-id">
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light-secondary"
-                                    data-bs-dismiss="modal">
-                                    <i class="bx bx-x d-block d-sm-none"></i>
-                                    <span class="d-none d-sm-block">Cancel</span>
-                                </button>
-                                <button type="submit" class="btn btn-danger me-1 mb-1">Delete</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
         
 
         </div>
@@ -315,6 +230,23 @@
                                 </div>`);
 
             }
+
+
+            // Get last invoice doc no
+            $('.add-new-invoice-btn').click(function() {
+
+                $.ajax({
+                    url: "{{ route('get-last-invoice-doc-no') }}",
+                    type: "GET",
+                    success: function(data) {
+                        var newDocNo = 'ATI' + data;
+                        $('#doc-no').val(newDocNo);
+                    },
+                    error: function(errormessage) {
+                        showAler(errormessage.responseText, 'danger')
+                    }
+                })
+            });
 
 
             // Read all invoices
