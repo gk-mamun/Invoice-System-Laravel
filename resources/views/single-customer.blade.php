@@ -91,55 +91,12 @@
                             
                         </section>
                        
-                        <section class="section">
-                            <div class="card">
-                                <div class="card-body">
-                                    @if(count($customer->invoices) > 0)
-                                        <table class="table table-striped" id="table1">
-                                            <thead>
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>Doc No</th>
-                                                    <th>Passport</th>
-                                                    <th>Ticket</th>
-                                                    <th>Passenger Name</th>
-                                                    <th>Travel Date</th>
-                                                    <th>Status</th>
-                                                    <th>Fare</th>
-                                                    <th>Credit</th>
-                                                    <th>Balance</th>
-                                                    <th style="min-width: 100px;">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                
-                                                    @foreach ($customer->invoices as $invoice)
-                                                        <tr>
-                                                            <td>{{ date_format(date_create($invoice->created_at),"d/m/Y") }}</td>
-                                                            <td>{{ $invoice->doc_no }}</td>
-                                                            <td>{{ $invoice->passport }}</td>
-                                                            <td>{{ $invoice->ticket }}</td>
-                                                            <td>{{ $invoice->passenger }}</td>
-                                                            <td>{{ $invoice->travel_date }}</td>
-                                                            <td>{{ $invoice->status }}</td>
-                                                            <td>{{ $invoice->fare }}</td>
-                                                            <td>{{ $invoice->credit }}</td>
-                                                            <td>{{ $invoice->total }}</td>
-                                                            <td>
-                                                                <button class="btn btn-success icon invoice-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="{{ $invoice->id }}" data-customerid="{{ $customer->id }}"><i class="bi bi-pencil-square"></i></button>
-                                                                <button class="btn btn-danger icon invoice-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="{{ $invoice->id }}"  data-customerid="{{ $customer->id }}"><i class="bi bi-trash-fill"></i></button>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                
-                                            </tbody>
-                                        </table>
-                                    @else
-                                        <div class="pt-4 pb-2">
-                                            <p class="text-center">There is no invoice for this vendor.</p>
-                                        </div>
-                                    @endif
-                                </div>
+                        <div id="alert"></div>
+
+                        <section class="section" id="customer-invoices">
+                            {{-- Loader --}}
+                            <div class="p-2 text-center" id="customer-invoice-div-loader">
+                                <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 8rem" alt="loader">
                             </div>
         
                         </section>
@@ -156,7 +113,7 @@
                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
                     role="document">
-                    <div class="modal-content">
+                    <div class="modal-content" style="overflow-y: auto;">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Update Invoice/Laser</h5>
                             <button type="button" class="close" data-bs-dismiss="modal"
@@ -270,7 +227,6 @@
                 </div>
             </div>
 
-
             <!--Delete Invoice Modal -->
             <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -286,12 +242,13 @@
                         </div>
 
                         {{-- Loader --}}
-                        <div class="p-2 text-center" id="delete-type-form-loader" style="display: none;">
+                        <div class="p-2 text-center" id="delete-invoice-form-loader" style="display: none;">
                             <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
                         </div>
 
-                        <form class="form form-vertical" id="delete-type-modal">
-                            <input type="hidden" id="delete-type-id">
+                        <form class="form form-vertical" id="delete-invoice-form">
+                            <input type="hidden" id="delete-invoice-id" name="delete_invoice_id">
+                            <input type="hidden"  name="customer_id" value="{{ $customer->id }}">
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary"
                                     data-bs-dismiss="modal">
@@ -299,6 +256,60 @@
                                     <span class="d-none d-sm-block">Cancel</span>
                                 </button>
                                 <button type="submit" class="btn btn-danger me-1 mb-1">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!--Void Invoice Modal -->
+            <div class="modal fade" id="voidInvoiceModal" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                    role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Void Invoice</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="void-invoice-form-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <form class="form form-vertical" id="void-invoice-form">
+                            <input type="hidden" id="void-invoice-id" name="void_invoice_id">
+                            <input type="hidden"  name="customer_id" value="{{ $customer->id }}">
+                            <input type="hidden" name="status" value="void">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Fare</label>
+                                            <input type="text" class="form-control" id="void-modal-fare" name="fare" placeholder="Fare..." required>
+                                        </div>
+                                    </div>
+
+                                    {{-- <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <input type="text" class="form-control" id="status" name="status" placeholder="Status...">
+                                        </div>
+                                    </div> --}}
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light-secondary"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                    <span class="d-none d-sm-block">Cancel</span>
+                                </button>
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Void</button>
                             </div>
                         </form>
                     </div>
@@ -327,6 +338,17 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
             });
+
+            // Alert function
+            function showAlert(message, type) {
+                var alertDiv = $('#alert');
+                alertDiv.html(`<div class="alert alert-`+ type +` alert-dismissible show fade">
+                                    `+message+`
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>`);
+
+            }
 
             var createLaserForm = $('#create-customer-lazer-form');
 
@@ -357,35 +379,80 @@
 
             });
 
+            function getInvoiceDataToUpdate(btn) {
+                btn.click(function() {
+                    var invoiceId = $(this).data('id');
+                    var invoiceCustomerId = $(this).data('customerid');
 
-            $('.invoice-update-btn').click(function() {
-                var invoiceId = $(this).data('id');
-                var invoiceCustomerId = $(this).data('customerid');
+                    $.ajax({
+                        url: "{{ route('get-customer-single-invoice-data') }}",
+                        type: "POST",
+                        data: {
+                            invoiceId,
+                            invoiceCustomerId,
+                        },
+                        success: function(data) {
+                            console.log(data.id);
+                            $('#edit-invoice-id').val(data.id);
+                            $('#doc-no').val(data.doc_no);
+                            $('#passport').val(data.passport);
+                            $('#ticket').val(data.ticket);
+                            $('#pnr').val(data.pnr);
+                            $('#passenger').val(data.passenger);
+                            $('#sector').val(data.sector);
+                            $('#travel-date').val(data.travel_date);
+                            $('#fare').val(data.fare);
+                            $('#status').val(data.status);
+                            $("#type").val(data.type_id);
+                        }
+                    })
+                });
+            }
 
-                $.ajax({
-                    url: "{{ route('get-customer-single-invoice-data') }}",
-                    type: "POST",
-                    data: {
-                        invoiceId,
-                        invoiceCustomerId,
-                    },
-                    success: function(data) {
-                        console.log(data.id);
-                        $('#edit-invoice-id').val(data.id);
-                        $('#doc-no').val(data.doc_no);
-                        $('#passport').val(data.passport);
-                        $('#ticket').val(data.ticket);
-                        $('#pnr').val(data.pnr);
-                        $('#passenger').val(data.passenger);
-                        $('#sector').val(data.sector);
-                        $('#travel-date').val(data.travel_date);
-                        $('#fare').val(data.fare);
-                        $('#status').val(data.status);
-                        $("#type").val(data.type_id);
-                    }
+
+            // Show Delete Customer data to modal
+            function showDeleteInvoiceData(btn) {
+                btn.click(function() {
+                    var deleteInvoiceId = $('#delete-invoice-id');
+                    deleteInvoiceId.val($(this).data('id'));
                 })
-            });
+            }
 
+            // Show Void Invoice data to modal
+            function showVoidInvoiceData(btn) {
+                btn.click(function() {
+                    $('#void-invoice-id').val($(this).data('id'));
+                    $('#void-modal-fare').val($(this).data('fare'));
+                })
+            }
+
+            // Read all customer's invoices
+            function readCustomerInvoices() {
+                var id = "{{ $customer->id }}";
+                var url = '{{ route("read-customer-invoice", ":id") }}';
+                url = url.replace(':id', id);
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(data) {
+                        $('#customer-invoices').html(data);
+                        var table1 = document.querySelector('#table1');
+                        var dataTable = new simpleDatatables.DataTable(table1);
+                        var updateBtn = $('.invoice-update-btn');
+                        var deleteBtn = $('.invoice-delete-btn');
+                        var voidBtn = $('.invoice-void-btn');
+                        getInvoiceDataToUpdate(updateBtn);
+                        showDeleteInvoiceData(deleteBtn);
+                        showVoidInvoiceData(voidBtn);
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                    }
+                });
+            };
+            readCustomerInvoices();
+
+            // Invoice Update functionalities
             var updateInvoiceForm = $('#update-invoice-form');
 
             updateInvoiceForm.on('submit', function(e) {
@@ -404,17 +471,79 @@
                         loader.show();
                     },
                     success: function(data) {
-                        // setTimeout(function() {
-                        //     loader.hide();
-                        //     $('#editInvoiceModal').modal('hide');
-                        //     showAlert("Invoice is updated successfully", "success");
-                        //     // readInvoices();
-                        //     updateInvoiceForm.trigger("reset");
-                        // }, 500);
-                        console.log(data);
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#editInvoiceModal').modal('hide');
+                            showAlert("Invoice is updated successfully", "success");
+                            readCustomerInvoices();
+                            updateInvoiceForm.trigger("reset");
+                        }, 500);
                     }
                 });
 
+
+            });
+
+            // Invoice delete functionalities
+            var deleteInvoiceForm = $('#delete-invoice-form');
+
+            deleteInvoiceForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                var loader = $('#delete-invoice-form-loader');
+
+                $.ajax({
+                    url: "{{ route('delete-customer-invoice') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#deleteInvoiceModal').modal('hide');
+                            showAlert("Invoice is deleted successfully", "success");
+                            readCustomerInvoices();
+                            deleteInvoiceForm.trigger("reset");
+                            console.log(data);
+                        }, 500);
+                    }
+                });
+            });
+
+            // Invoice void functionalities
+            var voidInvoiceForm = $('#void-invoice-form');
+
+            voidInvoiceForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                var loader = $('#void-invoice-form-loader');
+
+                $.ajax({
+                    url: "{{ route('void-customer-invoice') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#voidInvoiceModal').modal('hide');
+                            showAlert("Invoice is being void successfully", "success");
+                            readCustomerInvoices();
+                            voidInvoiceForm.trigger("reset");
+                            console.log(data);
+                        }, 500);
+                    }
+                });
 
             });
 

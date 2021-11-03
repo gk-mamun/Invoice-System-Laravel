@@ -61,8 +61,17 @@ Route::get('/read-invoices', [InvoiceController::class, 'readInvoices'])->name('
 Route::post('/invoices', [InvoiceController::class, 'storeInvoice'])->name('create-invoice');
 Route::get('/get-last-invoice-doc-no', [InvoiceController::class, 'getLastInvoiceDocNo'])->name('get-last-invoice-doc-no');
 
+Route::get('/read-single-customer-invoice/{id}', [CustomerInvoiceController::class, 'readCustomerInvoices'])->name('read-customer-invoice');
 Route::post('/get-customer-single-invoice-data', [CustomerInvoiceController::class, 'getSingleInvoiceData'])->name('get-customer-single-invoice-data');
 Route::post('/update-customer-invoice', [CustomerInvoiceController::class, 'updateCustomerInvoice'])->name('update-customer-invoice');
+Route::post('/delete-customer-invoice', [CustomerInvoiceController::class, 'deleteCustomerInvoice'])->name('delete-customer-invoice');
+Route::post('/void-customer-invoice', [CustomerInvoiceController::class, 'voidCustomerInvoice'])->name('void-customer-invoice');
+
+Route::get('/read-single-vendor-invoice/{id}', [VendorInvoiceController::class, 'readVendorInvoices'])->name('read-vendor-invoice');
+Route::post('/get-vendor-single-invoice-data', [VendorInvoiceController::class, 'getSingleInvoiceData'])->name('get-vendor-single-invoice-data');
+Route::post('/update-vendor-invoice', [VendorInvoiceController::class, 'updateVendorInvoice'])->name('update-vendor-invoice');
+Route::post('/delete-vendor-invoice', [VendorInvoiceController::class, 'deleteVendorInvoice'])->name('delete-vendor-invoice');
+Route::post('/void-vendor-invoice', [VendorInvoiceController::class, 'voidVendorInvoice'])->name('void-vendor-invoice');
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::post('/users', [UserController::class, 'createUser'])->name('create-user');

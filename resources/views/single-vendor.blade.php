@@ -91,48 +91,12 @@
                             
                         </section>
                        
-                        <section class="section">
-                            <div class="card">
-                                <div class="card-body">
-                                    @if(count($vendor->invoices) > 0)
-                                        <table class="table table-striped" id="table1">
-                                            <thead>
-                                                <tr>
-                                                    <th>Doc No</th>
-                                                    <th>Passport</th>
-                                                    <th>Ticket</th>
-                                                    <th>Passenger Name</th>
-                                                    <th>Travel Date</th>
-                                                    <th>Fare</th>
-                                                    <th>Credit</th>
-                                                    <th>Balance</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                
-                                                    @foreach ($vendor->invoices as $invoice)
-                                                        <tr>
-                                                            <td>{{ $invoice->doc_no }}</td>
-                                                            <td>{{ $invoice->passport }}</td>
-                                                            <td>{{ $invoice->ticket }}</td>
-                                                            <td>{{ $invoice->passenger }}</td>
-                                                            <td>{{ $invoice->travel_date }}</td>
-                                                            <td>{{ $invoice->fare }}</td>
-                                                            <td>{{ $invoice->credit }}</td>
-                                                            <td>{{ $invoice->total }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                
-                                            </tbody>
-                                        </table>
-                                    @else
-                                        <div class="pt-4 pb-2">
-                                            <p class="text-center">There is no invoice for this vendor.</p>
-                                        </div>
-                                    @endif
-                                </div>
+                        <section class="section" id="vendor-invoices">
+
+                            <div class="p-2 text-center">
+                                <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 8rem" alt="loader">
                             </div>
-        
+
                         </section>
                        
                     </div>
@@ -142,35 +106,110 @@
             @include('footer')
 
 
-            <!-- Add New Customer Modal -->
-            <div class="modal fade" id="addNewCustomerModal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <!-- Edit InVoice Modal -->
+            <div class="modal fade" id="editInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
                     role="document">
-                    <div class="modal-content">
+                    <div class="modal-content" style="overflow-y: auto;">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Add New Customer</h5>
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Update Invoice/Laser</h5>
                             <button type="button" class="close" data-bs-dismiss="modal"
                                 aria-label="Close">
                                 <i data-feather="x"></i>
                             </button>
                         </div>
-                        <form class="form form-vertical">
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="update-invoice-form-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <form class="form form-vertical" id="update-invoice-form">
                             <div class="modal-body">
                                 
                                 <div class="form-body">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="first-name-vertical">Type</label>
-                                                <input type="text" id="inoice-type"
-                                                    class="form-control" name="invoice_type"
-                                                    placeholder="Invoice type...">
+                                                <label>Doc No.</label>
+                                                <input type="text" class="form-control" id="doc-no" name="doc_no" placeholder="Document no..." disabled required>
                                             </div>
                                         </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Passport No.</label>
+                                                <input type="text" class="form-control" id="passport" name="passport" placeholder="Passport no...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Ticket</label>
+                                                <input type="text" class="form-control" id="ticket" name="ticket" placeholder="Ticket...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>PNR</label>
+                                                <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Passenger Name</label>
+                                                <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Sector</label>
+                                                <input type="text" class="form-control" id="sector" name="sector" placeholder="Sector...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Travel Date</label>
+                                                <input type="date" class="form-control" id="travel-date" name="travel_date" placeholder="Travel Date...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Fare</label>
+                                                <input type="text" class="form-control" id="fare" name="fare" placeholder="Fare..." required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Status</label>
+                                                <input type="text" class="form-control" id="status" name="status" placeholder="Status...">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>Invoice Type</label>
+                                                <select class="choices form-select" id="type" name="type" required>
+                                                    <option selected disabled>Choose Invoice type</option>
+                                                    @foreach ($types as $type)
+                                                        <option value="{{ $type->id }}">{{ $type->title }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        
                                     </div>
                                 </div>
-                                
+
+                                <input type="hidden" id="edit-invoice-id" name="edit_invoice_id">
+                                <input type="hidden" name="vendor_id" value="{{ $vendor->id }}">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary"
@@ -178,7 +217,7 @@
                                     <i class="bx bx-x d-block d-sm-none"></i>
                                     <span class="d-none d-sm-block">Close</span>
                                 </button>
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Update</button>
                             </div>
                         </form>
                     </div>
@@ -186,52 +225,8 @@
             </div>
 
 
-            <!-- Edit Customer Modal -->
-            <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
-                    role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Edit Customer</h5>
-                            <button type="button" class="close" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <i data-feather="x"></i>
-                            </button>
-                        </div>
-                        <form class="form form-vertical">
-                            <div class="modal-body">
-                                
-                                <div class="form-body">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label for="first-name-vertical">Type</label>
-                                                <input type="text" id="inoice-type"
-                                                    class="form-control" name="invoice_type"
-                                                    placeholder="Invoice type...">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-light-secondary"
-                                    data-bs-dismiss="modal">
-                                    <i class="bx bx-x d-block d-sm-none"></i>
-                                    <span class="d-none d-sm-block">Close</span>
-                                </button>
-                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Delete Customer Modal -->
-            <div class="modal fade" id="deleteCustomerModal" tabindex="-1" role="dialog"
+            <!--Delete Invoice Modal -->
+            <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
                     role="document">
@@ -243,8 +238,15 @@
                                 <i data-feather="x"></i>
                             </button>
                         </div>
-                        <form class="form form-vertical">
-                            <input type="text" value=":type_id">
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="delete-invoice-form-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <form class="form form-vertical" id="delete-invoice-form">
+                            <input type="hidden" id="delete-invoice-id" name="delete_invoice_id">
+                            <input type="hidden"  name="vendor_id" value="{{ $vendor->id }}">
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light-secondary"
                                     data-bs-dismiss="modal">
@@ -257,6 +259,61 @@
                     </div>
                 </div>
             </div>
+
+            <!--Void Invoice Modal -->
+            <div class="modal fade" id="voidInvoiceModal" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                    role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Void Invoice</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+
+                        {{-- Loader --}}
+                        <div class="p-2 text-center" id="void-invoice-form-loader" style="display: none;">
+                            <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                        </div>
+
+                        <form class="form form-vertical" id="void-invoice-form">
+                            <input type="hidden" id="void-invoice-id" name="void_invoice_id">
+                            <input type="hidden"  name="vendor_id" value="{{ $vendor->id }}">
+                            <input type="hidden" name="status" value="void">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Fare</label>
+                                            <input type="text" class="form-control" id="void-modal-fare" name="fare" placeholder="Fare..." required>
+                                        </div>
+                                    </div>
+
+                                    {{-- <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <input type="text" class="form-control" id="status" name="status" placeholder="Status...">
+                                        </div>
+                                    </div> --}}
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light-secondary"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                    <span class="d-none d-sm-block">Cancel</span>
+                                </button>
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Void</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
 
@@ -279,6 +336,17 @@
                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                    }
            });
+
+           // Alert function
+           function showAlert(message, type) {
+                var alertDiv = $('#alert');
+                alertDiv.html(`<div class="alert alert-`+ type +` alert-dismissible show fade">
+                                    `+message+`
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>`);
+
+           }
 
            var createLaserForm = $('#create-vendor-lazer-form');
 
@@ -308,6 +376,175 @@
                });
 
            });
+
+
+           function getInvoiceDataToUpdate(btn) {
+                btn.click(function() {
+                    var invoiceId = $(this).data('id');
+                    var invoiceVendorId = $(this).data('vendorid');
+
+                    $.ajax({
+                        url: "{{ route('get-vendor-single-invoice-data') }}",
+                        type: "POST",
+                        data: {
+                            invoiceId,
+                            invoiceVendorId,
+                        },
+                        success: function(data) {
+                            console.log(data.id);
+                            $('#edit-invoice-id').val(data.id);
+                            $('#doc-no').val(data.doc_no);
+                            $('#passport').val(data.passport);
+                            $('#ticket').val(data.ticket);
+                            $('#pnr').val(data.pnr);
+                            $('#passenger').val(data.passenger);
+                            $('#sector').val(data.sector);
+                            $('#travel-date').val(data.travel_date);
+                            $('#fare').val(data.fare);
+                            $('#status').val(data.status);
+                            $("#type").val(data.type_id);
+                        }
+                    })
+                });
+           }
+
+           // Show Delete Invoice data to modal
+            function showDeleteInvoiceData(btn) {
+                btn.click(function() {
+                    var deleteInvoiceId = $('#delete-invoice-id');
+                    deleteInvoiceId.val($(this).data('id'));
+                })
+            }
+
+            // Show Void Invoice data to modal
+            function showVoidInvoiceData(btn) {
+                btn.click(function() {
+                    $('#void-invoice-id').val($(this).data('id'));
+                    $('#void-modal-fare').val($(this).data('fare'));
+                })
+            }
+
+           // Read all customer's invoices
+           function readVendorInvoices() {
+                var id = "{{ $vendor->id }}";
+                var url = '{{ route("read-vendor-invoice", ":id") }}';
+                url = url.replace(':id', id);
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: function(data) {
+                        $('#vendor-invoices').html(data);
+                        var table1 = document.querySelector('#table1');
+                        var dataTable = new simpleDatatables.DataTable(table1);
+                        var updateBtn = $('.invoice-update-btn');
+                        var deleteBtn = $('.invoice-delete-btn');
+                        var voidBtn = $('.invoice-void-btn');
+                        getInvoiceDataToUpdate(updateBtn);
+                        showDeleteInvoiceData(deleteBtn);
+                        showVoidInvoiceData(voidBtn);
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                    }
+                });
+           };
+           readVendorInvoices();
+
+           // Invoice Update functionalities
+           var updateInvoiceForm = $('#update-invoice-form');
+
+            updateInvoiceForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                var loader = $('#update-invoice-form-loader');
+
+                $.ajax({
+                    url: "{{ route('update-vendor-invoice') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#editInvoiceModal').modal('hide');
+                            showAlert("Invoice is updated successfully", "success");
+                            readVendorInvoices();
+                            updateInvoiceForm.trigger("reset");
+                        }, 500);
+                        
+                    }
+                });
+
+
+            });
+           
+            // Invoice delete functionalities
+            var deleteInvoiceForm = $('#delete-invoice-form');
+
+            deleteInvoiceForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                var loader = $('#delete-invoice-form-loader');
+
+                $.ajax({
+                    url: "{{ route('delete-vendor-invoice') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#deleteInvoiceModal').modal('hide');
+                            showAlert("Invoice is deleted successfully", "success");
+                            readVendorInvoices();
+                            deleteInvoiceForm.trigger("reset");
+                            console.log(data);
+                        }, 500);
+                    }
+                });
+            });
+
+            // Invoice void functionalities
+            var voidInvoiceForm = $('#void-invoice-form');
+
+            voidInvoiceForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                var loader = $('#void-invoice-form-loader');
+
+                $.ajax({
+                    url: "{{ route('void-vendor-invoice') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            $('#voidInvoiceModal').modal('hide');
+                            showAlert("Invoice is being void successfully", "success");
+                            readVendorInvoices();
+                            voidInvoiceForm.trigger("reset");
+                            console.log(data);
+                        }, 500);
+                    }
+                });
+
+            });
 
         });
    </script>

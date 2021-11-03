@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Vendor;
+use App\Models\InvoiceType;
 
 class VendorController extends Controller
 {
@@ -22,8 +23,12 @@ class VendorController extends Controller
     public function getSingleVendor($id)
     {
         $vendor = Vendor::find($id);
+        $types = InvoiceType::all();
 
-        return view('single-vendor', ['vendor' => $vendor]);
+        return view('single-vendor', [
+            'vendor' => $vendor,
+            'types' => $types,
+        ]);
     }
 
     // add vendor
