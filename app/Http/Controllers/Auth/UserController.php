@@ -67,6 +67,7 @@ class UserController extends Controller
                     <th>'. $user->email .'</th>
                     <th>'. ucwords($user->role) .'</th>
                     <th>
+                        <a href="/customers/" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>
                         <button class="btn btn-danger icon user-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="'. $user->id .'"><i class="bi bi-trash-fill"></i></button>
                     </th>
                 </tr>

@@ -26,7 +26,7 @@ class CreateVendorInvoicesTable extends Migration
             $table->string('status')->nullable();
             $table->decimal('credit', 10, 2)->default(0.00);
             $table->decimal('total', 10, 2)->nullable();
-            $table->foreignId('type_id')->onDelete('set null');
+            $table->string('type')->nullable();
             $table->foreignId('vendor_id')->onDelete('set null');
             $table->timestamps();
         });

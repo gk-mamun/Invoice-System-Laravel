@@ -84,11 +84,9 @@ class VendorInvoiceController extends Controller
     }
 
 
-    public function getSingleInvoiceData(Request $request)
+    public function getSingleInvoiceData($id)
     {
-        $invoice_id = $request->invoiceId;
-
-        $invoice = VendorInvoice::find($invoice_id);
+        $invoice = VendorInvoice::find($id);
 
         return $invoice;
     }
@@ -130,19 +128,29 @@ class VendorInvoiceController extends Controller
                 $invoiceToUpdateTotal->save();
             }
         }
-        
-        $oldInvoice->passport = $request->passport;
-        $oldInvoice->ticket = $request->ticket;
-        $oldInvoice->pnr = $request->pnr;
-        $oldInvoice->passenger = $request->passenger;
-        $oldInvoice->sector = $request->sector;
-        $oldInvoice->travel_date = $request->travel_date;
+     
+        if(!empty($request->passport)) {
+            $oldInvoice->passport = $request->passport;
+        }
+        if(!empty($request->ticket)) {
+            $oldInvoice->ticket = $request->ticket;
+        }
+        if(!empty($request->pnr)) {
+            $oldInvoice->pnr = $request->pnr;
+        }
+        if(!empty($request->passenger)) {
+            $oldInvoice->passenger = $request->passenger;
+        }
+        if(!empty($request->sector)) {
+            $oldInvoice->sector = $request->sector;
+        }
+        if(!empty($request->travel_date)) {
+            $oldInvoice->travel_date = $request->travel_date;
+        }
+
         $oldInvoice->fare = $request->fare;
         $oldInvoice->status = $request->status;
-        $oldInvoice->type_id = $request->type;
         $oldInvoice->save();
-
-        return $operation;
     }
 
 

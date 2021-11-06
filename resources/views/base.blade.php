@@ -64,19 +64,11 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item  has-sub {{ (request()->is('types')) ? 'active' : '' }}">
-                            <a href="#" class='sidebar-link'>
+                        <li class="sidebar-item  {{ (request()->is('invoices')) ? 'active' : '' }}">
+                            <a href="{{ route('invoices') }}" class='sidebar-link'>
                                 <i class="bi bi-file-post"></i>
                                 <span>Laser Invoices</span>
                             </a>
-                            <ul class="submenu ">
-                                <li class="submenu-item ">
-                                    <a href="{{ route('invoices') }}">All Invoices</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a href="{{ route('types') }}">Invoice Type</a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="sidebar-item {{ (request()->is('customers')) ? 'active' : '' }}">

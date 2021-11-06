@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\InvoiceType;
 use App\Models\Customer;
 use App\Models\Vendor;
 use App\Models\CustomerInvoice;
@@ -21,19 +20,19 @@ class InvoiceController extends Controller
     {
         $customers = Customer::all();
         $vendors = Vendor::all();
-        $types = InvoiceType::all();
+        
 
         return view('invoices', [
             'customers' => $customers,
             'vendors' => $vendors,
-            'types' => $types
+       
         ]);
     }
 
     // Read all invoice
     public function readInvoices()
     {
-        $types = InvoiceType::all();
+       
         $customerInvoices = CustomerInvoice::orderBy('created_at', 'desc')->get();
         $vendorInvoices = VendorInvoice::orderBy('created_at', 'desc')->get();
         
@@ -64,12 +63,9 @@ class InvoiceController extends Controller
                 <th>'. $invoice->pnr .'</th>
                 <th>'. $invoice->passenger .'</th>
                 <th>'. $invoice->travel_date .'</th>
+                <th>'. $invoice->type .'</th>
                 ';
-            foreach($types as $type) {
-                if ( $type->id == $invoice->type_id) {
-                    $html.= '<th>' . $type->title . '</td>';
-                }
-            }
+            
             
         }
 
@@ -102,13 +98,8 @@ class InvoiceController extends Controller
                 <th>'. $invoice->pnr .'</th>
                 <th>'. $invoice->passenger .'</th>
                 <th>'. $invoice->travel_date .'</th>
+                <th>'. $invoice->type .'</th>
                 ';
-            foreach($types as $type) {
-                if ( $type->id == $invoice->type_id) {
-                    $html.= '<th>' . $type->title . '</td>';
-                }
-            }
-            
         }
 
         $html .= '
@@ -130,12 +121,25 @@ class InvoiceController extends Controller
         // Create customer invoice
         $customer = new CustomerInvoice();
         $customer->doc_no = $request->docNo;
-        $customer->passport = $request->passport;
-        $customer->ticket = $request->ticket;
-        $customer->pnr = $request->pnr;
-        $customer->passenger = $request->passenger;
-        $customer->sector = $request->sector;
-        $customer->travel_date = $request->travelDate;
+        if(!empty($request->passport)) {
+            $customer->passport = $request->passport;
+        }
+        if(!empty($request->ticket)) {
+            $customer->ticket = $request->ticket;
+        }
+        if(!empty($request->pnr)) {
+            $customer->pnr = $request->pnr;
+        }
+        if(!empty($request->passenger)) {
+            $customer->passenger = $request->passenger;
+        }
+        if(!empty($request->sector)) {
+            $customer->sector = $request->sector;
+        }
+        if(!empty($request->travelDate)) {
+            $customer->travel_date = $request->travelDate;
+        }
+
         $customer->fare = $request->sellingFare;
         if($last_customer_invoice == null) {
             $customer->total = $request->sellingFare;
@@ -143,7 +147,7 @@ class InvoiceController extends Controller
         else {
             $customer->total = $last_customer_invoice->total + $request->sellingFare;
         }
-        $customer->type_id = $request->type;
+        $customer->type = $request->type;
         $customer->customer_id = $request->customer;
         $customer->user_id = auth()->id();
         $customer->save();
@@ -151,12 +155,26 @@ class InvoiceController extends Controller
         // create vendor invoice
         $vendor = new VendorInvoice();
         $vendor->doc_no = $request->docNo;
-        $vendor->passport = $request->passport;
-        $vendor->ticket = $request->ticket;
-        $vendor->pnr = $request->pnr;
-        $vendor->passenger = $request->passenger;
-        $vendor->sector = $request->sector;
-        $vendor->travel_date = $request->travelDate;
+
+        if(!empty($request->passport)) {
+            $vendor->passport = $request->passport;
+        }
+        if(!empty($request->ticket)) {
+            $vendor->ticket = $request->ticket;
+        }
+        if(!empty($request->pnr)) {
+            $vendor->pnr = $request->pnr;
+        }
+        if(!empty($request->passenger)) {
+            $vendor->passenger = $request->passenger;
+        }
+        if(!empty($request->sector)) {
+            $vendor->sector = $request->sector;
+        }
+        if(!empty($request->travelDate)) {
+            $vendor->travel_date = $request->travelDate;
+        }
+        
         $vendor->fare = $request->purchasedFare;
         if($last_vendor_invoice == null) {
             $vendor->total = $request->purchasedFare;
@@ -164,9 +182,11 @@ class InvoiceController extends Controller
         else {
             $vendor->total = $last_vendor_invoice->total + $request->purchasedFare;
         }
-        $vendor->type_id = $request->type;
+        $vendor->type = $request->type;
         $vendor->vendor_id = $request->vendor;
         $vendor->save();
+
+        return $request->passport;;
 
 
     }

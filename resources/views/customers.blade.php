@@ -354,33 +354,6 @@
 
             }
 
-            // Get Invoice Type to update
-            function getUpdateCustomerData(btn) {
-                
-                btn.click(function() {
-                    var customerId = $(this).data('id');
-                    var updateUrl = "{{ route('get-single-customer-to-update', ':id') }}";
-                    updateUrl = updateUrl.replace(':id', customerId);
-                    $.ajax({
-                        url: updateUrl,
-                        type: "GET",
-                        success: function(data) {
-                            $('#new-customer-id').val(data.id);
-                            $('#new-customer-name').val(data.title);
-                            $('#new-customer-email').val(data.email);
-                            $('#new-customer-phone').val(data.phone);
-                            $('#new-customer-code').val(data.code);
-                            $('#new-customer-address').val(data.address);
-                            
-                        },
-                        error: function (errormessage) {
-                            showAlert(errormessage.responseText, "danger");
-                        }
-                    });
-                
-                })
-            }
-
             // Update Customer 
             var updateCustomerForm = $('#update-customer-form');
 
@@ -410,15 +383,6 @@
                     }
                 });
             });
-
-
-            // Show Delete Customer data to modal
-            function showDeleteCustomerData(btn) {
-                btn.click(function() {
-                    var deleteCustomerId = $('#delete-customer-id');
-                    deleteCustomerId.val($(this).data('id'));
-                })
-            }
 
 
             // Delete Invoice Type
@@ -462,10 +426,32 @@
                         customerTable.html(data);
                         var table1 = document.querySelector('#table1');
                         var dataTable = new simpleDatatables.DataTable(table1);
-                        var updateBtn = $('.customer-update-btn');
-                        getUpdateCustomerData(updateBtn);
-                        var deleteBtn = $('.customer-delete-btn');
-                        showDeleteCustomerData(deleteBtn);
+                        
+                        $('#table1').on('click', '.customer-update-btn', function() {
+                            var customerId = $(this).data('id');
+                            var updateUrl = "{{ route('get-single-customer-to-update', ':id') }}";
+                            updateUrl = updateUrl.replace(':id', customerId);
+                            $.ajax({
+                                url: updateUrl,
+                                type: "GET",
+                                success: function(data) {
+                                    $('#new-customer-id').val(data.id);
+                                    $('#new-customer-name').val(data.title);
+                                    $('#new-customer-email').val(data.email);
+                                    $('#new-customer-phone').val(data.phone);
+                                    $('#new-customer-code').val(data.code);
+                                    $('#new-customer-address').val(data.address);
+                                    
+                                },
+                                error: function (errormessage) {
+                                    showAlert(errormessage.responseText, "danger");
+                                }
+                            });
+                        });
+                        $('#table1').on('click', '.customer-delete-btn', function() {
+                            var deleteCustomerId = $('#delete-customer-id');
+                            deleteCustomerId.val($(this).data('id'));
+                        });
                     },
                     error: function (errormessage) {
                         showAlert(errormessage.responseText, "danger");

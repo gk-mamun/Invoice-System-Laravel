@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Vendor;
-use App\Models\InvoiceType;
 
 class VendorController extends Controller
 {
@@ -23,11 +22,9 @@ class VendorController extends Controller
     public function getSingleVendor($id)
     {
         $vendor = Vendor::find($id);
-        $types = InvoiceType::all();
 
         return view('single-vendor', [
             'vendor' => $vendor,
-            'types' => $types,
         ]);
     }
 
@@ -135,7 +132,7 @@ class VendorController extends Controller
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $file_name = time() . '_' . 'avatar.' . $file->extension();
-            $file->move(public_path('images/vendors'), $file_name);
+            $file->move(public_path('images/vendor'), $file_name);
 
             $vendor->avatar = $file_name;
         }

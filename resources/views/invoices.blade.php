@@ -2,6 +2,11 @@
 
 @push('stylesheets')
     <link rel="stylesheet" href="{{ asset('vendors/simple-datatables/style.css') }}">
+    <style>
+        .form-dynamic {
+            display: none;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -92,45 +97,19 @@
 
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label>Passport No.</label>
-                                                <input type="text" class="form-control" id="passport" placeholder="Passport no...">
+                                                <label>Invoice Type</label>
+                                                <select class="choices form-select typeSelection" id="type" required>
+                                                    <option selected disabled>Choose Invoice type</option>
+                                                    <option value="ticket">Ticket</option>
+                                                    <option value="gamca">Gamca Medical</option>
+                                                    <option value="insurance">Insurance</option>
+                                                    <option value="hmushrif">hMushrif</option>
+                                                    <option value="hotel">Hotel</option>
+                                                </select>
                                             </div>
                                         </div>
 
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Ticket</label>
-                                                <input type="text" class="form-control" id="ticket" placeholder="Ticket...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>PNR</label>
-                                                <input type="text" class="form-control" id="pnr" placeholder="PNR...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Passenger Name</label>
-                                                <input type="text" class="form-control" id="passenger" placeholder="Passenger Name...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Sector</label>
-                                                <input type="text" class="form-control" id="sector" placeholder="Sector...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Travel Date</label>
-                                                <input type="date" class="form-control" id="travel-date" placeholder="Travel Date...">
-                                            </div>
-                                        </div>
+                                        <div id="dynamic-inputs-container"></div>
 
                                         <div class="col-12">
                                             <div class="form-group">
@@ -143,18 +122,6 @@
                                             <div class="form-group">
                                                 <label>Selling Fare</label>
                                                 <input type="text" class="form-control" id="selling-fare" placeholder="Selling Fare..." required>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Invoice Type</label>
-                                                <select class="choices form-select" id="type" required>
-                                                    <option selected disabled>Choose Invoice type</option>
-                                                    @foreach ($types as $type)
-                                                        <option value="{{ $type->id }}">{{ $type->title }}</option>
-                                                    @endforeach
-                                                </select>
                                             </div>
                                         </div>
 
@@ -317,12 +284,156 @@
                             showAlert("Invoice is created successfully", "success");
                             readInvoices();
                             createInvoiceForm.trigger("reset");
+                            $('#dynamic-inputs-container').html('');
                         }, 500);
                         
                     }
                 });
 
 
+            });
+
+
+
+
+            // Type selecton functionalities
+            $('.typeSelection').on('change', function() {
+                var inputContainer = $('#dynamic-inputs-container');
+                var type = $(this).val();
+                console.log(type);
+                // Ticket input group
+                if (type == 'ticket') {
+                    $('#dynamic-inputs-container').html(`<div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Ticket No.</label>
+                                        <input type="text" class="form-control" id="ticket" placeholder="Ticket..." required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>PNR</label>
+                                        <input type="text" class="form-control" id="pnr" placeholder="PNR..." required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Passenger Name</label>
+                                        <input type="text" class="form-control" id="passenger" placeholder="Passenger Name..." required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Sector</label>
+                                        <input type="text" class="form-control" id="sector" placeholder="Sector..." required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Travel Date</label>
+                                        <input type="date" class="form-control" id="travel-date" placeholder="Travel Date..." required>
+                                    </div>
+                                </div>
+                            </div>`
+                    );
+                }
+                // Gamca Medical Input Groups
+                else if (type == 'gamca') {
+                    $('#dynamic-inputs-container').html(`<div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Passport No.</label>
+                                    <input type="text" class="form-control" id="passport" placeholder="Passport no...">
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>GCC Slip No.</label> <!-- PNR -->
+                                        <input type="text" class="form-control" id="pnr" placeholder="GCC...">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Passenger Name</label>
+                                        <input type="text" class="form-control" id="passenger" placeholder="Passenger Name...">
+                                    </div>
+                                </div>
+                            </div>  
+                        </div>`
+                    );
+                }
+                // Insurance Inputs Group
+                else if (type == 'insurance') {
+                    $('#dynamic-inputs-container').html(`<div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Policy No.</label>
+                                    <input type="text" class="form-control" id="passport" placeholder="Policy no...">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Passenger Name</label>
+                                    <input type="text" class="form-control" id="passenger" placeholder="Passenger Name...">
+                                </div>
+                            </div>  
+                        </div>`
+                    );
+                }
+                // hMushrif Inputs Group
+                else if (type == 'hmushrif') {
+                    $('#dynamic-inputs-container').html(`<div>
+                                
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Passenger Name</label>
+                                    <input type="text" class="form-control" id="passenger" placeholder="Passenger Name...">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Transaction Number</label> <!-- PNR -->
+                                    <input type="text" class="form-control" id="pnr" placeholder="Transaction no...">
+                                </div>
+                            </div>
+                                
+                        </div>`
+                    );
+                }
+                // Hotel Booking Inputs Group
+                else if (type == 'hotel') {
+                    $('#dynamic-inputs-container').html(`<div>
+                                
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Passenger Name</label>
+                                        <input type="text" class="form-control" id="passenger" placeholder="Passenger Name...">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Booking Reference</label> <!-- PNR -->
+                                        <input type="text" class="form-control" id="pnr" placeholder="Booking Reference...">
+                                    </div>
+                                </div>
+                        
+                        </div>`
+                    );
+                }
+                else {
+                    $('#dynamic-inputs-container').html('');
+                }
+                
+            
+            
             });
 
 

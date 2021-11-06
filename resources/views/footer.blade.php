@@ -4,8 +4,7 @@
             <p>2021 &copy; Lazer</p>
         </div>
         <div class="float-end">
-            <p>Developed <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                    href="#">gkmamun</a></p>
+            <p>Developed <span class="text-danger"><i class="bi bi-heart"></i></span> by <a href="https://gkmamun.com" target="blank">gkmamun</a></p>
         </div>
     </div>
 </footer>

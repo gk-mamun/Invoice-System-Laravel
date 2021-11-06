@@ -353,34 +353,7 @@
                                         aria-label="Close"></button>
                                 </div>`);
 
-            }
-
-            // Get vendor data to update
-            function getUpdateVendorData(btn) {
-                
-                btn.click(function() {
-                    var vendorId = $(this).data('id');
-                    var updateUrl = "{{ route('get-single-vendor-to-update', ':id') }}";
-                    updateUrl = updateUrl.replace(':id', vendorId);
-                    $.ajax({
-                        url: updateUrl,
-                        type: "GET",
-                        success: function(data) {
-                            $('#new-vendor-id').val(data.id);
-                            $('#new-vendor-name').val(data.title);
-                            $('#new-vendor-email').val(data.email);
-                            $('#new-vendor-phone').val(data.phone);
-                            $('#new-vendor-code').val(data.code);
-                            $('#new-vendor-address').val(data.address);
-                            
-                        },
-                        error: function (errormessage) {
-                            showAlert(errormessage.responseText, "danger");
-                        }
-                    });
-                
-                })
-            }
+            }        
 
             // Update Customer 
             var updateVendorForm = $('#update-vendor-form');
@@ -411,14 +384,6 @@
                     }
                 });
             });
-
-            // Show Delete vendor data to modal
-            function showDeleteVendorData(btn) {
-                btn.click(function() {
-                    var deleteVendorId = $('#delete-vendor-id');
-                    deleteVendorId.val($(this).data('id'));
-                })
-            }
 
             // Delete Invoice Type
             var deleteVendorForm = $('#delete-vendor-form');
@@ -460,10 +425,32 @@
                         vendorTable.html(data);
                         var table1 = document.querySelector('#table1');
                         var dataTable = new simpleDatatables.DataTable(table1);
-                        var updateBtn = $('.vendor-update-btn');
-                        getUpdateVendorData(updateBtn);
-                        var deleteBtn = $('.vendor-delete-btn');
-                        showDeleteVendorData(deleteBtn);
+
+                        $('#table1').on('click', '.vendor-update-btn', function() {
+                            var vendorId = $(this).data('id');
+                            var updateUrl = "{{ route('get-single-vendor-to-update', ':id') }}";
+                            updateUrl = updateUrl.replace(':id', vendorId);
+                            $.ajax({
+                                url: updateUrl,
+                                type: "GET",
+                                success: function(data) {
+                                    $('#new-vendor-id').val(data.id);
+                                    $('#new-vendor-name').val(data.title);
+                                    $('#new-vendor-email').val(data.email);
+                                    $('#new-vendor-phone').val(data.phone);
+                                    $('#new-vendor-code').val(data.code);
+                                    $('#new-vendor-address').val(data.address);
+                                    
+                                },
+                                error: function (errormessage) {
+                                    showAlert(errormessage.responseText, "danger");
+                                }
+                            });
+                        });
+                        $('#table1').on('click', '.vendor-delete-btn', function() {
+                            var deleteVendorId = $('#delete-vendor-id');
+                            deleteVendorId.val($(this).data('id'));
+                        });
                     },
                     error: function (errormessage) {
                         showAlert(errormessage.responseText, "danger");

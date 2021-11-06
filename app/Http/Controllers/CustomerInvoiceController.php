@@ -84,11 +84,9 @@ class CustomerInvoiceController extends Controller
     }
 
 
-    public function getSingleInvoiceData(Request $request)
+    public function getSingleInvoiceData($id)
     {
-        $invoice_id = $request->invoiceId;
-
-        $invoice = CustomerInvoice::find($invoice_id);
+        $invoice = CustomerInvoice::find($id);
 
         return $invoice;
     }
@@ -131,18 +129,30 @@ class CustomerInvoiceController extends Controller
             }
         }
         
-        $oldInvoice->passport = $request->passport;
-        $oldInvoice->ticket = $request->ticket;
-        $oldInvoice->pnr = $request->pnr;
-        $oldInvoice->passenger = $request->passenger;
-        $oldInvoice->sector = $request->sector;
-        $oldInvoice->travel_date = $request->travel_date;
+        if(!empty($request->passport)) {
+            $oldInvoice->passport = $request->passport;
+        }
+        if(!empty($request->ticket)) {
+            $oldInvoice->ticket = $request->ticket;
+        }
+        if(!empty($request->pnr)) {
+            $oldInvoice->pnr = $request->pnr;
+        }
+        if(!empty($request->passenger)) {
+            $oldInvoice->passenger = $request->passenger;
+        }
+        if(!empty($request->sector)) {
+            $oldInvoice->sector = $request->sector;
+        }
+        if(!empty($request->travel_date)) {
+            $oldInvoice->travel_date = $request->travel_date;
+        }
+
         $oldInvoice->fare = $request->fare;
         $oldInvoice->status = $request->status;
-        $oldInvoice->type_id = $request->type;
         $oldInvoice->save();
 
-        return $operation;
+
     }
 
     public function deleteCustomerInvoice(Request $request)
@@ -214,4 +224,52 @@ class CustomerInvoiceController extends Controller
 
         return $operation;
     }
+
+    public function customerPayment(Request $request)
+    {
+        $amount = $request->payment_amount;
+        $status = $request->payment_media;
+
+        // Create document no for payment invoice
+        $lastInvoice = CustomerInvoice::orderBy('created_at', 'desc')->first();
+        if($lastInvoice != '') {
+            $codeStr = substr($lastInvoice->doc_no, 3);
+            $increment = $codeStr + 1;
+            if(strlen($increment) == 1) {
+                $code = '000' . $increment;
+            }
+            else if(strlen($increment) == 2) {
+                $code = '00' . $increment;
+            }
+            else if(strlen($increment) == 3) {
+                $code = '0' . $increment;
+            }
+            else {
+                $code = $increment;
+            }
+        }
+        else {
+            $code = '0001';
+        }
+
+        $docNo = 'ATI' . $code;
+
+        // Find last invoice for this customer
+        $lastInvoiceForThisCustomer = CustomerInvoice::where('customer_id', '=', $request->customer_id)->orderBy('id', 'desc')->first();
+
+        $newTotal = $lastInvoiceForThisCustomer->total - $amount;
+
+        $paymentInvoice = new customerInvoice();
+        $paymentInvoice->doc_no = $docNo;
+        $paymentInvoice->status = $status;
+        $paymentInvoice->credit = $amount;
+        $paymentInvoice->total = $newTotal;
+        $paymentInvoice->type_id = 1;
+        $paymentInvoice->customer_id = $request->customer_id;
+        $paymentInvoice->user_id = $newTotal;
+        $paymentInvoice->save();
+        
+
+    }
+
 }

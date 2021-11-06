@@ -138,44 +138,17 @@
 
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label>Passport No.</label>
-                                                <input type="text" class="form-control" id="passport" name="passport" placeholder="Passport no...">
+                                                <label>Invoice Type</label>
+                                                <input type="text" class="form-control" id="type" name="type" placeholder="Type..." disabled required >
                                             </div>
                                         </div>
 
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Ticket</label>
-                                                <input type="text" class="form-control" id="ticket" name="ticket" placeholder="Ticket...">
+                                        <div id="dynamic-inputs-container">
+                                            {{-- Loader --}}
+                                            <div class="p-2 text-center" id="update-invoice-form-loader">
+                                                <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
                                             </div>
-                                        </div>
 
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>PNR</label>
-                                                <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Passenger Name</label>
-                                                <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Sector</label>
-                                                <input type="text" class="form-control" id="sector" name="sector" placeholder="Sector...">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Travel Date</label>
-                                                <input type="date" class="form-control" id="travel-date" name="travel_date" placeholder="Travel Date...">
-                                            </div>
                                         </div>
 
                                         <div class="col-12">
@@ -191,19 +164,6 @@
                                                 <input type="text" class="form-control" id="status" name="status" placeholder="Status...">
                                             </div>
                                         </div>
-
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>Invoice Type</label>
-                                                <select class="choices form-select" id="type" name="type" required>
-                                                    <option selected disabled>Choose Invoice type</option>
-                                                    @foreach ($types as $type)
-                                                        <option value="{{ $type->id }}">{{ $type->title }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
                                         
                                     </div>
                                 </div>
@@ -378,53 +338,7 @@
            });
 
 
-           function getInvoiceDataToUpdate(btn) {
-                btn.click(function() {
-                    var invoiceId = $(this).data('id');
-                    var invoiceVendorId = $(this).data('vendorid');
-
-                    $.ajax({
-                        url: "{{ route('get-vendor-single-invoice-data') }}",
-                        type: "POST",
-                        data: {
-                            invoiceId,
-                            invoiceVendorId,
-                        },
-                        success: function(data) {
-                            console.log(data.id);
-                            $('#edit-invoice-id').val(data.id);
-                            $('#doc-no').val(data.doc_no);
-                            $('#passport').val(data.passport);
-                            $('#ticket').val(data.ticket);
-                            $('#pnr').val(data.pnr);
-                            $('#passenger').val(data.passenger);
-                            $('#sector').val(data.sector);
-                            $('#travel-date').val(data.travel_date);
-                            $('#fare').val(data.fare);
-                            $('#status').val(data.status);
-                            $("#type").val(data.type_id);
-                        }
-                    })
-                });
-           }
-
-           // Show Delete Invoice data to modal
-            function showDeleteInvoiceData(btn) {
-                btn.click(function() {
-                    var deleteInvoiceId = $('#delete-invoice-id');
-                    deleteInvoiceId.val($(this).data('id'));
-                })
-            }
-
-            // Show Void Invoice data to modal
-            function showVoidInvoiceData(btn) {
-                btn.click(function() {
-                    $('#void-invoice-id').val($(this).data('id'));
-                    $('#void-modal-fare').val($(this).data('fare'));
-                })
-            }
-
-           // Read all customer's invoices
+           // Read all Vendor's invoices
            function readVendorInvoices() {
                 var id = "{{ $vendor->id }}";
                 var url = '{{ route("read-vendor-invoice", ":id") }}';
@@ -436,12 +350,168 @@
                         $('#vendor-invoices').html(data);
                         var table1 = document.querySelector('#table1');
                         var dataTable = new simpleDatatables.DataTable(table1);
-                        var updateBtn = $('.invoice-update-btn');
-                        var deleteBtn = $('.invoice-delete-btn');
-                        var voidBtn = $('.invoice-void-btn');
-                        getInvoiceDataToUpdate(updateBtn);
-                        showDeleteInvoiceData(deleteBtn);
-                        showVoidInvoiceData(voidBtn);
+
+                        $('#table1').on('click', '.invoice-update-btn', function() {
+                            var invoiceId = $(this).data('id');
+                            var url = '{{ route("get-vendor-single-invoice-data", ":id") }}';
+                            url = url.replace(':id', invoiceId);
+
+                            $.ajax({
+                                url: url,
+                                type: "GET",
+                                success: function(data) {
+                                    $('#edit-invoice-id').val(data.id);
+                                    $('#doc-no').val(data.doc_no);
+                                    
+                                    $('#fare').val(data.fare);
+                                    $('#status').val(data.status);
+                                    $("#type").val(data.type);
+
+                                    // Ticket input group
+                                    if (data.type == 'ticket') {
+                                        $('#dynamic-inputs-container').html(`<div>
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Ticket No.</label>
+                                                            <input type="text" class="form-control" id="ticket" name="ticket" placeholder="Ticket..." required value="${data.ticket}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>PNR</label>
+                                                            <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR..." required value="${data.pnr}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Passenger Name</label>
+                                                            <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name..." required value="${data.passenger}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Sector</label>
+                                                            <input type="text" class="form-control" id="sector" name="sector" placeholder="Sector..." required value="${data.sector}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Travel Date</label>
+                                                            <input type="date" class="form-control" id="travel-date" name="travel_date" placeholder="Travel Date..." required value="${data.travel_date}">
+                                                        </div>
+                                                    </div>
+                                                </div>`
+                                        );
+                                    }
+                                    // Gamca Medical Input Groups
+                                    else if (data.type == 'gamca') {
+                                        $('#dynamic-inputs-container').html(`<div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Passport No.</label>
+                                                        <input type="text" class="form-control" id="passport" name="passport" placeholder="Passport no..." value="${data.passport}">
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>GCC Slip No.</label> <!-- PNR -->
+                                                            <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR..." value="${data.pnr}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Passenger Name</label>
+                                                            <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name..." value="${data.passenger}">
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                            </div>`
+                                        );
+                                    }
+                                    // Insurance Inputs Group
+                                    else if (data.type == 'insurance') {
+                                        $('#dynamic-inputs-container').html(`<div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Policy No.</label>
+                                                        <input type="text" class="form-control" id="passport" name="passport" placeholder="Passport no..." value="${data.passport}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Passenger Name</label>
+                                                        <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name..." value="${data.passenger}">
+                                                    </div>
+                                                </div>  
+                                            </div>`
+                                        );
+                                    }
+                                    // hMushrif Inputs Group
+                                    else if (data.type == 'hmushrif') {
+                                        $('#dynamic-inputs-container').html(`<div>
+                                                    
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Passenger Name</label>
+                                                        <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name..." value="${data.passenger}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Transaction Number</label> <!-- PNR -->
+                                                        <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR..." value="${data.pnr}">
+                                                    </div>
+                                                </div>
+                                                    
+                                            </div>`
+                                        );
+                                    }
+                                    // Hotel Booking Inputs Group
+                                    else if (data.type == 'hotel') {
+                                        $('#dynamic-inputs-container').html(`<div>
+                                                    
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Passenger Name</label>
+                                                            <input type="text" class="form-control" id="passenger" name="passenger" placeholder="Passenger Name..." value="${data.passenger}">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            <label>Booking Reference</label> <!-- PNR -->
+                                                            <input type="text" class="form-control" id="pnr" name="pnr" placeholder="PNR..." value="${data.pnr}">
+                                                        </div>
+                                                    </div>
+                                            
+                                            </div>`
+                                        );
+                                    }
+                                    else {
+                                        $('#dynamic-inputs-container').html('');
+                                    }    
+
+
+                                // End Success Function
+                                }
+                            })
+                        });
+                        $('#table1').on('click', '.invoice-void-btn', function() {
+                            $('#void-invoice-id').val($(this).data('id'));
+                            $('#void-modal-fare').val($(this).data('fare'));
+                        });
+                        $('#table1').on('click', '.invoice-delete-btn', function() {
+                            var deleteInvoiceId = $('#delete-invoice-id');
+                            deleteInvoiceId.val($(this).data('id'));
+                        });
+                        
                     },
                     error: function (errormessage) {
                         console.log(errormessage.responseText);
