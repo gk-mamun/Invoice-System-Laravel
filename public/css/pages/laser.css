@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&display=swap');
+
 #laser-container {
-    width: 900px;
+    width: 1000px;
     margin: auto;
 }
 
@@ -7,19 +9,18 @@
     position: relative;
     min-height: 120px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
 #laser .laser-header .company-info h1 {
     font-size: 44px;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
 }
 
 #laser .logo-container {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    width: 130px;
+    width: 120px;
     height: 130px;
 }
 

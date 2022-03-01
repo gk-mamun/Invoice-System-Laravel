@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CustomerInvoice;
+use Carbon\Carbon;
 
 class CustomerInvoiceController extends Controller
 {
@@ -16,7 +17,7 @@ class CustomerInvoiceController extends Controller
 
     public function readCustomerInvoices($id) 
     {
-        $invoices = CustomerInvoice::where('customer_id', '=', $id)->get();
+        $invoices = CustomerInvoice::where('customer_id', '=', $id)->orderby('created_at', 'desc')->get();
 
         $html = '';
 
@@ -34,6 +35,7 @@ class CustomerInvoiceController extends Controller
                                     <th>Passenger Name</th>
                                     <th>Travel Date</th>
                                     <th>Status</th>
+                                    <th>Type</th>
                                     <th>Fare</th>
                                     <th>Credit</th>
                                     <th>Balance</th>
@@ -54,14 +56,21 @@ class CustomerInvoiceController extends Controller
                         <td>' . $invoice->passenger . '</td>
                         <td>' . $invoice->travel_date . '</td>
                         <td>' . ucwords($invoice->status) . '</td>
+                        <td>' . ucwords($invoice->type) . '</td>
                         <td>' . $invoice->fare . '</td>
                         <td>' . $invoice->credit . '</td>
                         <td>' . $invoice->total . '</td>
                         <td>
-                            <button class="btn btn-success icon invoice-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="' . $invoice->id . '" data-customerid="' . $id . '"><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-info icon invoice-void-btn" data-bs-toggle="modal" data-bs-target="#voidInvoiceModal" data-id="' . $invoice->id . '" data-customerid="' . $id . '" data-fare="' . $invoice->fare . '"><i class="bi bi-badge-vo"></i></button>
-                            <button class="btn btn-danger icon invoice-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="' . $invoice->id . '"  data-customerid="' . $id . '"><i class="bi bi-trash-fill"></i></button>
-                        </td>
+                            ';
+                            if(auth()->user()->role == 'admin') {
+
+                                $html .= '
+                                <button class="btn btn-success icon invoice-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="' . $invoice->id . '" data-customerid="' . $id . '"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-danger icon invoice-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="' . $invoice->id . '"  data-customerid="' . $id . '"><i class="bi bi-trash-fill"></i></button>';
+                            }
+
+                     $html .=  '</td>
                 </tr>
                 ';          
             }
@@ -258,17 +267,68 @@ class CustomerInvoiceController extends Controller
         $lastInvoiceForThisCustomer = CustomerInvoice::where('customer_id', '=', $request->customer_id)->orderBy('id', 'desc')->first();
 
         $newTotal = $lastInvoiceForThisCustomer->total - $amount;
+        $type = 'payment';
 
         $paymentInvoice = new customerInvoice();
         $paymentInvoice->doc_no = $docNo;
         $paymentInvoice->status = $status;
         $paymentInvoice->credit = $amount;
         $paymentInvoice->total = $newTotal;
-        $paymentInvoice->type_id = 1;
+        $paymentInvoice->type = $type;
         $paymentInvoice->customer_id = $request->customer_id;
-        $paymentInvoice->user_id = $newTotal;
+        $paymentInvoice->total = $newTotal;
+        $paymentInvoice->user_id = auth()->id();
         $paymentInvoice->save();
         
+
+    }
+
+    public function calculateCommission(Request $request)
+    {
+        $user_id = $request->user_id;
+        $rate = $request->rate;
+        
+        $start_date = Carbon::parse($request->start_date)->toDateTimeString();
+        $end_date = Carbon::parse($request->end_date)->toDateTimeString();
+
+        $numInvoice = CustomerInvoice::where('user_id', '=', $user_id)->where('created_at', '>=', $start_date)->where('created_at', '<=', $end_date)->count();
+        $sales = CustomerInvoice::where('user_id', '=', $user_id)->where('created_at', '>=', $start_date)->where('created_at', '<=', $end_date)->sum('fare');
+        $commission = round(($sales * $rate)/100, 2);
+
+        $html = '
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <p>Sales Amount</p>
+                            <h1 class="d-flex" style="font-size: 64px;"><span style="font-size: 20px;">$</span>'. $sales .'</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <p>Number of Invoice</p>
+                            <h1 class="d-flex" style="font-size: 64px;"><span style="font-size: 20px;"></span>'. $numInvoice .'</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <p>Commission</p>
+                            <h1 class="d-flex" style="font-size: 64px;"><span style="font-size: 20px;">$</span>'. $commission .'</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ';
+        
+        return $html;
 
     }
 

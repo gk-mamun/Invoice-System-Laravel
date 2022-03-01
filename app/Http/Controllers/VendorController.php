@@ -80,15 +80,20 @@ class VendorController extends Controller
         foreach($vendors as $vendor) {
             $html .= '
                 <tr>
-                    <th>'. $vendor->code .'</th>
-                    <th>'. $vendor->title .'</th>
-                    <th>'. $vendor->email .'</th>
-                    <th>'. $vendor->phone .'</th>
+                    <th><a href="/our-vendors/'. $vendor->id .'">'. $vendor->code .'</a></th>
+                    <th><a href="/our-vendors/'. $vendor->id .'">'. $vendor->title .'</a></th>
+                    <th><a href="/our-vendors/'. $vendor->id .'">'. $vendor->email .'</a></th>
+                    <th><a href="/our-vendors/'. $vendor->id .'">'. $vendor->phone .'</a></th>
                     <th>
-                        <a href="/our-vendors/'. $vendor->id .'" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>
-                        <button class="btn btn-success icon vendor-update-btn" data-bs-toggle="modal" data-bs-target="#editVendorModal" data-id="'. $vendor->id .'"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger icon vendor-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteVendorModal" data-id="'. $vendor->id .'"><i class="bi bi-trash-fill"></i></button>
-                    </th>
+                        <a href="/our-vendors/'. $vendor->id .'" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>';
+                        if(auth()->user()->role == 'admin') {
+                            $html .= '
+                                <button class="btn btn-success icon vendor-update-btn" data-bs-toggle="modal" data-bs-target="#editVendorModal" data-id="'. $vendor->id .'"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-danger icon vendor-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteVendorModal" data-id="'. $vendor->id .'"><i class="bi bi-trash-fill"></i></button>
+                            ';
+                        }
+
+                $html .= '</th>
                 </tr>
             ';
         }

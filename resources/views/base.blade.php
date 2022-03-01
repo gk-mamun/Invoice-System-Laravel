@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{ asset('vendors/perfect-scrollbar/perfect-scrollbar.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/bootstrap-icons/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="shortcut icon" href="{{ asset('images/favicon.svg') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo/favicon.png') }}" type="image/gif">
     <style>
         #sidebar-user-info {
             position: absolute;
@@ -46,7 +46,7 @@
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between">
                         <div class="logo">
-                            <a href="{{ route('home') }}"><img src="{{ asset('images/logo/logo.png') }}" alt="Logo" srcset=""></a>
+                            <a href="{{ route('home') }}"><img src="{{ asset('images/logo/company-logo.jpg') }}" alt="Logo" srcset="" style="height: 5rem;"></a>
                         </div>
                         <div class="toggler">
                             <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>

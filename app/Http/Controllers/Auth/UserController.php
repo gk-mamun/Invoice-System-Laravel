@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\CustomerInvoice;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index()
     {
 
@@ -36,7 +42,6 @@ class UserController extends Controller
 
         return;
     }
-
 
     // Read Users
     public function readUser()
@@ -67,7 +72,7 @@ class UserController extends Controller
                     <th>'. $user->email .'</th>
                     <th>'. ucwords($user->role) .'</th>
                     <th>
-                        <a href="/customers/" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>
+                        <a href="/single-user/'.$user->id.'" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>
                         <button class="btn btn-danger icon user-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="'. $user->id .'"><i class="bi bi-trash-fill"></i></button>
                     </th>
                 </tr>
@@ -84,7 +89,6 @@ class UserController extends Controller
         return $html;
     }
 
-
     // Delete User
     public function deleteUser(Request $request) {
         $deleteId = $request->deleteId;
@@ -95,7 +99,6 @@ class UserController extends Controller
         
         return;
     }
-
 
     // Show Setting
     public function showSetting() {
@@ -119,7 +122,7 @@ class UserController extends Controller
             $html .= '<img src="../images/customers/default.jpg" alt=""> ';
         }
         else {
-            $html .= '<img src="../images/users/ '. $user->avatar .'">';
+            $html .= '<img src="../images/users/'. $user->avatar .'">';
         }
                            
                               
@@ -133,7 +136,7 @@ class UserController extends Controller
             $html .= '<p>Phone: Not Available</p>';
         } 
         else {
-            $html .= '<p>Phone: Not Available</p>';
+            $html .= '<p>Phone: '. $user->phonenumber .'</p>';
         }
         $html .= '       
                     </div>
@@ -167,7 +170,7 @@ class UserController extends Controller
                                             <div class="form-group has-icon-left mb-4">
                                                 <label>Name</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" placeholder="Name..." id="edit-user-name" required value="'. $user->name .'">
+                                                    <input type="text" name="name" class="form-control" placeholder="Name..." id="edit-user-name" required value="'. $user->name .'">
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-person"></i>
                                                     </div>
@@ -179,7 +182,7 @@ class UserController extends Controller
                                             <div class="form-group has-icon-left mb-4">
                                                 <label>Email</label>
                                                 <div class="position-relative">
-                                                    <input type="email" class="form-control" placeholder="Email..." id="edit-user-email" required value="'. $user->email .'">
+                                                    <input type="email" name="email" class="form-control" placeholder="Email..." id="edit-user-email" required value="'. $user->email .'">
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-envelope"></i>
                                                     </div>
@@ -189,9 +192,9 @@ class UserController extends Controller
 
                                         <div class="col-12">
                                             <div class="form-group has-icon-left mb-4">
-                                                <label>Email</label>
+                                                <label>Phone Number</label>
                                                 <div class="position-relative">
-                                                    <input type="text" class="form-control" placeholder="Phone number..." id="edit-user-phone" required value="'. $user->phonenumber .'">
+                                                    <input type="text" name="phone" class="form-control" placeholder="Phone number..." id="edit-user-phone" required value="'. $user->phonenumber .'">
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-envelope"></i>
                                                     </div>
@@ -207,7 +210,7 @@ class UserController extends Controller
                                             <div class="form-group has-icon-left mb-4">
                                                 <label>Password</label>
                                                 <div class="position-relative">
-                                                    <input type="password" class="form-control" id="password" placeholder="Password" >
+                                                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" >
                                                     <div class="form-control-icon">
                                                         <i class="bi bi-shield-lock"></i>
                                                     </div>
@@ -234,12 +237,11 @@ class UserController extends Controller
                                                 <small>If you do not want to change, keep it empty</small>
                                                 <div class="position-relative">
                                                     <input type="file" class="form-control" id="avatar" name="avatar">
-                                                    
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
+                                        <input type="hidden" name="role"  value="'. $user->role .'"/>
+                                        <input type="hidden" name="id" value="' .$user->id . '" />
                                     </div>
                                 </div>
                                 
@@ -260,4 +262,87 @@ class UserController extends Controller
 
         return $html;
     }
+
+    // Read single user data
+    public function singleUser($id)
+    {
+        $user = User::find($id);
+        $totalUserSale = CustomerInvoice::where('user_id', '=', $id)
+                                        ->where('type', '!=', 'payment')
+                                        ->where('type', '!=', 'Payment')
+                                        ->sum('fare');
+
+        return view('single-user', [
+            'user' => $user,
+            'totalSale' => $totalUserSale,
+        ]);
+    }
+
+
+    // Update user data
+    public function updateUser(Request $request)
+    {
+        $user = User::find($request->id);
+        
+        if(!empty($request->name)) {
+            $user->name = $request->name;
+        }
+        if(!empty($request->email)) {
+            $user->email = $request->email;
+        }
+        if(!empty($request->phone)) {
+            $user->phonenumber = $request->phone;
+        }
+        if(!empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->role = $request->role;
+        if($request->hasfile('avatar')) {
+            $avatar_name = 'avatar_' . time() . '.' . $request->avatar->extension();
+            $request->avatar->move(public_path('images/users'), $avatar_name);
+            $user->avatar = $avatar_name;
+        }
+
+        $user->save();
+
+    }
+
+
+    // Get user sales data
+    public function getUserSales()
+    {
+        $userSales = CustomerInvoice::where('user_id', '=', auth()->id())->where('type', '!=', 'payment')->sum('fare');
+        $numInvoices = CustomerInvoice::where('user_id', '=', auth()->id())->where('type', '!=', 'payment')->count();
+
+        $html = '
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 200px;">
+                            <h1 class="d-flex" style="font-size: 54px;"><span style="font-size: 20px;">$</span>'. $userSales .'</h1>
+                            <p style="font-size: 20px; font-weight: bold;">Total Sales Amount</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 200px;">
+                            <h1 class="d-flex" style="font-size: 54px;">'. $numInvoices .'</h1>
+                            <p style="font-size: 20px; font-weight: bold;">Total Number of Invoice</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        ';
+
+        return $html;
+    }
+
+
+
 }

@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Lazer</title>
+    <link rel="icon" href="{{ asset('images/logo/favicon.png') }}" type="image/gif">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/bootstrap-icons/bootstrap-icons.css') }}">
@@ -13,14 +14,14 @@
     <link rel="stylesheet" href="{{ asset('css/pages/auth.css') }}">
 </head>
 
-<body>
+<body> 
     <div id="auth">
 
         <div class="row h-100">
             <div class="col-lg-5 col-12 auth-container">
                 <div id="auth-left">
                     <div class="auth-logo">
-                        <a href=""><img src="{{ asset('images/logo/logo.png') }}" alt="Logo"></a>
+                        <a href=""><img src="{{ asset('images/logo/company-logo.jpg') }}" alt="Logo"></a>
                     </div>
                     <h1 class="auth-title">Log in.</h1>
                         @if(session('status')) 
@@ -54,7 +55,7 @@
 
                     <div class="text-center mt-5 text-lg fs-4 auth-footer-text">
                         
-                        <p><a class="font-bold" href="auth-forgot-password.html">Forgot password?</a>.</p>
+                        <p><a href="{{ route('password-reset-request') }}" class="font-bold" href="auth-forgot-password.html">Forgot password?</a>.</p>
                     </div>
                 </div>
             </div>

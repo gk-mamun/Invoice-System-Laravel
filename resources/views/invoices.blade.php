@@ -353,7 +353,7 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label>GCC Slip No.</label> <!-- PNR -->
-                                        <input type="text" class="form-control" id="pnr" placeholder="GCC...">
+                                        <input type="text" class="form-control" id="ticket" placeholder="GCC...">
                                     </div>
                                 </div>
 
@@ -400,7 +400,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>Transaction Number</label> <!-- PNR -->
-                                    <input type="text" class="form-control" id="pnr" placeholder="Transaction no...">
+                                    <input type="text" class="form-control" id="ticket" placeholder="Transaction no...">
                                 </div>
                             </div>
                                 

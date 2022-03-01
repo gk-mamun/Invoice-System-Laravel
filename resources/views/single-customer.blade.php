@@ -339,14 +339,14 @@
                     }
             });
 
-            //
+            // Reinit dynamic
             $('.reinit-dynamic-form-container').click(function() {
                 $('#dynamic-inputs-container').html(`
                     <div class="p-2 text-center" id="update-invoice-form-loader">
                         <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
                     </div>
                 `);
-            })
+            });
 
             // Alert function
             function showAlert(message, type) {

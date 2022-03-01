@@ -48,32 +48,71 @@
                         </div>
 
                         <section class="section">
-                            <div class="card">
-                                <div class="card-body">
-                                    <form action="" id="create-vendor-lazer-form">
-                                        <div class="row">
-                                            <input type="hidden" name="receiver_id" value="{{ $vendor->id }}">
-                                            <input type="hidden" name="receiver" value="vendor">
-                                            <div class="col-lg-4 mb-1">
-                                                <div class="input-group">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-calendar3-range-fill"></i></span>
-                                                    <input type="date" class="form-control" name="start_date" required>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Generate Invoice</h5>
+                                            <form action="" id="create-vendor-lazer-form">
+                                                <div class="row">
+                                                    <input type="hidden" name="receiver_id" value="{{ $vendor->id }}">
+                                                    <input type="hidden" name="receiver" value="vendor">
+                                                    <div class="col-lg-12 mb-3">
+                                                        <div class="input-group">
+                                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-calendar3-range-fill"></i></span>
+                                                            <input type="date" class="form-control" name="start_date" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12 mb-3">
+                                                        <div class="input-group">
+                                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-calendar3-range-fill"></i></span>
+                                                            <input type="date" class="form-control" name="end_date" required>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-lg-12 mb-1">
+                                                        <div class="input-group">
+                                                            <input type="submit" class="btn btn-primary" value="Create Laser" style="width: 100%;">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-4 mb-1">
-                                                <div class="input-group">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-calendar3-range-fill"></i></span>
-                                                    <input type="date" class="form-control" name="end_date" required>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-lg-4 mb-1">
-                                                <div class="input-group">
-                                                    <input type="submit" class="btn btn-primary" value="Create Laser" style="width: 100%;">
-                                                </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>Payment</h5>
+                                            {{-- Loader --}}
+                                            <div class="p-2 text-center" id="payment-form-loader" style="display: none;">
+                                                <img src="{{ asset('vendors/svg-loaders/oval.svg') }}" class="m-auto" style="width: 3rem" alt="loader">
+                                            </div>
+                                            <form id="vendor-payment-form">
+                                                <div class="row">
+                                                    <input type="hidden" name="vendor_id" value="{{ $vendor->id }}">
+                                                    <div class="col-12 mb-3">
+                                                        <div class="input-group">
+                                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-credit-card"></i></span>
+                                                            <input type="number" class="form-control" id="payment-amount" name="payment_amount" step="0.01" placeholder="Payment amount..." required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 mb-3">
+                                                        <div class="input-group">
+                                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-collection"></i></span>
+                                                            <input type="text" class="form-control" name="payment_media" placeholder="Payment media..." required>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-12">
+                                                        <div class="input-group">
+                                                            <input type="submit" class="btn btn-success" value="Add Payment" style="width: 100%;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -609,6 +648,37 @@
                             showAlert("Invoice is being void successfully", "success");
                             readVendorInvoices();
                             voidInvoiceForm.trigger("reset");
+                            console.log(data);
+                        }, 500);
+                    }
+                });
+
+            });
+
+            // Payment function
+            var paymentForm = $('#vendor-payment-form');
+
+            paymentForm.on('submit', function(e) {
+                e.preventDefault();
+
+                var loader = $('#payment-form-loader');
+
+                $.ajax({
+                    url: "{{ route('vendor-payment') }}",
+                    type: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(this),
+                    beforeSend: function() {
+                        loader.show();
+                    },
+                    success: function(data) {
+                        setTimeout(function() {
+                            loader.hide();
+                            showAlert("Payment added successfully", "success");
+                            readVendorInvoices();
+                            paymentForm.trigger("reset");
                             console.log(data);
                         }, 500);
                     }

@@ -84,6 +84,11 @@
                                 </section>
                             </div>
                         </div>
+
+                        {{-- User sales data --}}
+                        <div id="user-sales-data-container">
+                            
+                        </div>
                        
                     </div>
                 </section>
@@ -106,11 +111,7 @@
 @push('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('vendors/simple-datatables/simple-datatables.js') }}"></script>
-    <script>
-        // Simple Datatable
-        // let table1 = document.querySelector('#table1');
-        // let dataTable = new simpleDatatables.DataTable(table1);
-    </script>
+
     <script>
         
 
@@ -133,6 +134,19 @@
 
             }
 
+            // Show form alert
+            function showFormAlert(message) {
+                $('#inner-form-alert').html(`
+                    <div class="alert alert-danger alert-dismissible show fade">
+                       ${message}.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                    </div>
+                `);
+                setTimeout(function(){ 
+                    $('#inner-form-alert').html('');
+                }, 3000);
+            }
 
 
             // Read all users
@@ -143,6 +157,84 @@
                     success: function(data) {
                         $('#user-container').html(data);
                         profileUpdateForm = $('#profile-update-form');
+                        profileUpdateModal = $('#updateProfileModal');
+
+                        profileUpdateForm.on('submit', function(e) {
+                            e.preventDefault();
+
+                            console.log('submitted');
+                            var loader = $('#update-profile-form-loader');
+
+                            var password = $('#password').val();
+                            var password_confirmation = $('#confirm-password').val();
+                            
+
+                            if(password != '') {
+                                if (password.length < 8) {
+                                    // Check password length
+                                    showFormAlert('Password must be 8 characters or more.');
+
+                                } 
+                                else {
+                                    // Check password matching
+                                    if(password != password_confirmation) {
+                                        showFormAlert('Passwords do not match.');
+                                    }
+                                    else {
+                                        // Update with password
+                                        $.ajax({
+                                            url: "{{ route('update-user-data') }}",
+                                            type: "POST",
+                                            cache: false,
+                                            processData: false,
+                                            contentType: false,
+                                            data: new FormData(this),
+                                            beforeSend: function() {
+                                                loader.show();
+                                            },
+                                            success: function(data) {
+                                                setTimeout(function() {
+                                                    loader.hide();
+                                                    profileUpdateModal.modal('hide');
+                                                    readUsersData();
+                                                    profileUpdateForm.trigger("reset");
+                                                    console.log(data);
+                                                }, 500);
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+                            else {
+                                console.log('Password Empty');
+                                // Update without password
+                                $.ajax({
+                                    url: "{{ route('update-user-data') }}",
+                                    type: "POST",
+                                    cache: false,
+                                    processData: false,
+                                    contentType: false,
+                                    data: new FormData(this),
+                                    beforeSend: function() {
+                                        loader.show();
+                                    },
+                                    success: function(data) {
+                                        setTimeout(function() {
+                                            loader.hide();
+                                            profileUpdateModal.modal('hide');
+                                            readUsersData();
+                                            profileUpdateForm.trigger("reset");
+                                            console.log(data);
+                                        }, 500);
+                                    }
+                                });
+                            }
+
+
+                        })
+
+                        // End of success function
                     },
                     error: function (errormessage) {
                         console.log(errormessage.responseText);
@@ -152,40 +244,18 @@
             readUsersData();
 
 
-            // Create customer functionalities
-            // var profileUpdateForm = $('#profile-update-form');
-
-            profileUpdateForm.on('submit', function(e) {
-                e.preventDefault();
-                
-                var loader = $('#update-profile-form-loader');
-
-                var password = $('#password').val();
-                var password_confirmation = $('#confirm-password').val();
-                
-
-                if(password != '') {
-                    if (password.length < 8) {
-                        $('#inner-form-alert').html(`
-                            <div class="alert alert-danger alert-dismissible show fade">
-                                Password must be 8 characters or more.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                            </div>
-                        `);
-                        setTimeout(function(){ 
-                            $('#inner-form-alert').html('');
-                        }, 3000);
-                    } 
-                }
-                else {
-                    console.log('Password Empty');
-                }
-                
-
-                
-
-            });
+            // Read user sales data
+            function readUserSalesData(){
+                $.ajax({
+                    url: "{{ route('get-user-sales-data') }}",
+                    type: "GET",
+                    success: function(data) {
+                        console.log(data);
+                        $('#user-sales-data-container').html(data);
+                    }
+                });
+            }
+            readUserSalesData();
 
 
         });

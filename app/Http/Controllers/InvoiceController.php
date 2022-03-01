@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Vendor;
 use App\Models\CustomerInvoice;
 use App\Models\VendorInvoice;
+use App\Models\User;
 
 class InvoiceController extends Controller
 {
@@ -35,19 +36,27 @@ class InvoiceController extends Controller
        
         $customerInvoices = CustomerInvoice::orderBy('created_at', 'desc')->get();
         $vendorInvoices = VendorInvoice::orderBy('created_at', 'desc')->get();
-        
+        $users = User::all();
+        $customers = Customer::all();
+        $vendors = Vendor::all();
 
         $html = '
             <h3>Customer Invoice</h3>
             <table class="table table-striped" id="customerTable">
             <thead>
                 <tr>
+                    <th>Date</th>
                     <th>Doc No.</th>
-                    <th>Passport</th>
+                    <th>User</th>
+                    <th>Customer</th>
                     <th>PNR</th>
+                    <th>Passport/Policy</th>
+                    <th>Ticket</th>
                     <th>Passenger</th>
                     <th>Travel Date</th>
+                    <th>Status</th>
                     <th>Type</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -56,14 +65,32 @@ class InvoiceController extends Controller
         ';
 
         foreach($customerInvoices as $invoice) {
+            $invoice_user;
+            $invoice_customer;
+            foreach($users as $user) {
+                if($user->id == $invoice->user_id) {
+                    $invoice_user = $user->name;
+                }
+            }
+            foreach($customers as $customer) {
+                if($customer->id == $invoice->customer_id) {
+                    $invoice_customer = $customer->title;
+                }
+            }
             $html .= '
                 <tr>
+                <th>'. date_format(date_create($invoice->created_at),"d/m/Y") .'</th>
                 <th>'. $invoice->doc_no .'</th>
-                <th>'. $invoice->passport .'</th>
+                <th>'. $invoice_user .'</th>
+                <th>'. $invoice_customer .'</th>
                 <th>'. $invoice->pnr .'</th>
+                <th>'. $invoice->passport .'</th>
+                <th>'. $invoice->ticket .'</th>
                 <th>'. $invoice->passenger .'</th>
                 <th>'. $invoice->travel_date .'</th>
-                <th>'. $invoice->type .'</th>
+                <th>'. ucwords($invoice->status) .'</th>
+                <th>'. ucwords($invoice->type) .'</th>
+                
                 ';
             
             
@@ -79,26 +106,53 @@ class InvoiceController extends Controller
             <table class="table table-striped" id="vendorTable">
             <thead>
                 <tr>
+                    <th>Date</th>
                     <th>Doc No.</th>
-                    <th>Passport</th>
+                    <th>User</th>
+                    <th>Vendor</th>
                     <th>PNR</th>
+                    <th>Passport/Policy</th>
+                    <th>Ticket</th>
                     <th>Passenger</th>
                     <th>Travel Date</th>
+                    <th>Status</th>
                     <th>Type</th>
+                    
+                    
                 </tr>
             </thead>
             <tbody>
         ';
 
         foreach($vendorInvoices as $invoice) {
+            $invoice_user;
+            $invoice_vendor;
+            foreach($users as $user) {
+                if($user->id == $invoice->user_id) {
+                    $invoice_user = $user->name;
+                }
+            }
+            foreach($vendors as $vendor) {
+                if($vendor->id == $invoice->vendor_id) {
+                    $invoice_vendor = $vendor->title;
+                }
+            }
             $html .= '
                 <tr>
+                <th>'. date_format(date_create($invoice->created_at),"d/m/Y") .'</th>
                 <th>'. $invoice->doc_no .'</th>
-                <th>'. $invoice->passport .'</th>
+                <th>'. $invoice_user .'</th>
+                <th>'. $invoice_vendor .'</th>
                 <th>'. $invoice->pnr .'</th>
+                <th>'. $invoice->passport .'</th>
+                <th>'. $invoice->ticket .'</th>
                 <th>'. $invoice->passenger .'</th>
                 <th>'. $invoice->travel_date .'</th>
-                <th>'. $invoice->type .'</th>
+                <th>'. ucwords($invoice->status) .'</th>
+                <th>'. ucwords($invoice->type) .'</th>
+                
+                
+                
                 ';
         }
 

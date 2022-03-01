@@ -214,15 +214,12 @@
     </script>
     <script>
         
-
         $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
             });
-
-
             // Alert function
             function showAlert(message, type) {
                 var alertDiv = $('#alert');
@@ -231,9 +228,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"
                                         aria-label="Close"></button>
                                 </div>`);
-
             }
-
             // Show Delete Type data to modal
             function showDeleteUserData(btn) {
                 btn.click(function() {
@@ -241,16 +236,12 @@
                     deleteUserId.val($(this).data('id'));
                 })
             }
-
             // Delete user
             var deleteUserForm = $('#delete-user-modal');
-
             deleteUserForm.on('submit', function(e) {
                 e.preventDefault();
-
                 var loader = $('#delete-user-form-loader');
                 var deleteUserId = $('#delete-user-id').val();
-
                 $.ajax({
                     url: "{{ route('delete-user') }}",
                     type: "POST",
@@ -270,10 +261,7 @@
                         
                     }
                 });
-
             });
-
-
             // Read all users
             function readUsers() {
                 $.ajax({
@@ -292,22 +280,17 @@
                 });
             };
             readUsers();
-
-
             // Create customer functionalities
             var createUserForm = $('#create-user-form');
-
             createUserForm.on('submit', function(e) {
                 e.preventDefault();
                 
                 var loader = $('#create-user-form-loader');
-
                 var name = $('#user-name').val();
                 var email = $('#user-email').val();
                 var password = $('#password').val();
                 var password_confirmation = $('#confirm-password').val();
                 var role = $('#user-role').val();
-
                 if (password.length < 8) {
                     $('#inner-form-alert').html(`
                         <div class="alert alert-danger alert-dismissible show fade">
@@ -359,11 +342,7 @@
                         }, 3000);
                     }
                 }
-
             });
-
-
         });
-
     </script>
 @endpush

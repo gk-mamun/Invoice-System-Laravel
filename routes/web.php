@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\DashboardController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LaserController;
 use App\Http\Controllers\CustomerInvoiceController;
 use App\Http\Controllers\VendorInvoiceController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -30,8 +32,13 @@ Route::post('/login', [LoginController::class, 'login'])->name('user-login');
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-// Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/password/reset', [PasswordResetController::class, 'index'])->name('password-reset-request');
+Route::post('/password/reset', [PasswordResetController::class, 'send_password_reset_link']);
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'reset_password'])->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'update_password'])->name('reset-password');
+
 Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/home', [DashboardController::class, 'index']);
 
 Route::get('/types', [TypeController::class, 'index'])->name('types');
 Route::get('/read-types', [TypeController::class, 'readTypes'])->name('read-invoice-types');
@@ -73,6 +80,7 @@ Route::get('/get-vendor-single-invoice-data/{id}', [VendorInvoiceController::cla
 Route::post('/update-vendor-invoice', [VendorInvoiceController::class, 'updateVendorInvoice'])->name('update-vendor-invoice');
 Route::post('/delete-vendor-invoice', [VendorInvoiceController::class, 'deleteVendorInvoice'])->name('delete-vendor-invoice');
 Route::post('/void-vendor-invoice', [VendorInvoiceController::class, 'voidVendorInvoice'])->name('void-vendor-invoice');
+Route::post('/vendor-payment', [VendorInvoiceController::class, 'vendorPayment'])->name('vendor-payment');
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::post('/users', [UserController::class, 'createUser'])->name('create-user');
@@ -80,5 +88,10 @@ Route::get('/read-users', [UserController::class, 'readUser'])->name('read-users
 Route::post('/delete-user', [UserController::class, 'deleteUser'])->name('delete-user');
 Route::get('/setting', [UserController::class, 'showSetting'])->name('setting');
 Route::get('/get-user-data', [UserController::class, 'getUserData'])->name('get-user-data');
+Route::get('/single-user/{id}', [UserController::class, 'singleUser'])->name('single-user');
+Route::post('/update-user-data', [UserController::class, 'updateUser'])->name('update-user-data');
+Route::get('/get-user-sales', [UserController::class, 'getUserSales'])->name('get-user-sales-data');
 
-Route::post('/generate-laser', [LaserController::class, 'generateLaser'])->name('generate-laser');
+Route::post('/generate-laser', [LaserController::class, 'generateLaser'])->name('generate-laser'); 
+
+Route::post('/calculate-commission', [CustomerInvoiceController::class, 'calculateCommission'])->name('calculate-commission');

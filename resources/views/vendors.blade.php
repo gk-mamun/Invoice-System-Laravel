@@ -2,6 +2,24 @@
 
 @push('stylesheets')
     <link rel="stylesheet" href="{{ asset('vendors/simple-datatables/style.css') }}">
+    <style>
+        #vendor-table table tbody tr th:not(:last-child) {
+            padding: 0px;
+        }
+        #vendor-table table tbody tr th:not(:last-child) a {
+            transition: all 0.2s ease-in-out;
+            padding: 0.5em;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+        }
+        #vendor-table table tbody tr th:not(:last-child) a:hover {
+            background-color: #435ebe;
+            color: #fff;
+            cursor: pointer;
+        }
+
+    </style>
 @endpush
 
 @section('content')

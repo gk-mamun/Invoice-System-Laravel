@@ -29,11 +29,11 @@ body {
 }
 
 #auth #auth-left .auth-logo {
-    margin-bottom: 7rem
+    margin-bottom: 40px;
 }
 
 #auth #auth-left .auth-logo img {
-    height: 2rem
+    height: 150px;
 }
 
 #auth #auth-left .auth-footer-text {

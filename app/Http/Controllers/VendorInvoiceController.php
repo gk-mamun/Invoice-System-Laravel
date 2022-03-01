@@ -15,7 +15,7 @@ class VendorInvoiceController extends Controller
 
     public function readVendorInvoices($id) 
     {
-        $invoices = VendorInvoice::where('vendor_id', '=', $id)->get();
+        $invoices = VendorInvoice::where('vendor_id', '=', $id)->orderby('created_at', 'desc')->get();
 
         $html = '';
 
@@ -33,6 +33,7 @@ class VendorInvoiceController extends Controller
                                     <th>Passenger Name</th>
                                     <th>Travel Date</th>
                                     <th>Status</th>
+                                    <th>Type</th>
                                     <th>Fare</th>
                                     <th>Credit</th>
                                     <th>Balance</th>
@@ -53,14 +54,18 @@ class VendorInvoiceController extends Controller
                         <td>' . $invoice->passenger . '</td>
                         <td>' . $invoice->travel_date . '</td>
                         <td>' . ucwords($invoice->status) . '</td>
+                        <td>' . ucwords($invoice->type) . '</td>
                         <td>' . $invoice->fare . '</td>
                         <td>' . $invoice->credit . '</td>
                         <td>' . $invoice->total . '</td>
                         <td>
-                            <button class="btn btn-success icon invoice-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="' . $invoice->id . '" data-vendorid="' . $id . '"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-info icon invoice-void-btn" data-bs-toggle="modal" data-bs-target="#voidInvoiceModal" data-id="' . $invoice->id . '" data-vendorid="' . $id . '" data-fare="' . $invoice->fare . '"><i class="bi bi-badge-vo"></i></button>
-                            <button class="btn btn-danger icon invoice-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="' . $invoice->id . '"  data-vendorid="' . $id . '"><i class="bi bi-trash-fill"></i></button>
-                        </td>
+                            <button class="btn btn-info icon invoice-void-btn" data-bs-toggle="modal" data-bs-target="#voidInvoiceModal" data-id="' . $invoice->id . '" data-vendorid="' . $id . '" data-fare="' . $invoice->fare . '"><i class="bi bi-badge-vo"></i></button>';
+                            if(auth()->user()->role == 'admin') {
+                                $html .= '<button class="btn btn-success icon invoice-update-btn" data-bs-toggle="modal" data-bs-target="#editInvoiceModal" data-id="' . $invoice->id . '" data-vendorid="' . $id . '"><i class="bi bi-pencil-square"></i></button>
+                                
+                                <button class="btn btn-danger icon invoice-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal" data-id="' . $invoice->id . '"  data-vendorid="' . $id . '"><i class="bi bi-trash-fill"></i></button>';
+                            }
+                    $html .= '</td>
                 </tr>
                 ';          
             }
@@ -223,6 +228,55 @@ class VendorInvoiceController extends Controller
         $oldInvoice->save();
 
         return $operation;
+    }
+
+
+    public function vendorPayment(Request $request)
+    {
+        $amount = $request->payment_amount;
+        $status = $request->payment_media;
+
+        // Create document no for payment invoice
+        $lastInvoice = VendorInvoice::orderBy('created_at', 'desc')->first();
+        if($lastInvoice != '') {
+            $codeStr = substr($lastInvoice->doc_no, 3);
+            $increment = $codeStr + 1;
+            if(strlen($increment) == 1) {
+                $code = '000' . $increment;
+            }
+            else if(strlen($increment) == 2) {
+                $code = '00' . $increment;
+            }
+            else if(strlen($increment) == 3) {
+                $code = '0' . $increment;
+            }
+            else {
+                $code = $increment;
+            }
+        }
+        else {
+            $code = '0001';
+        }
+
+        $docNo = 'ATI' . $code;
+
+        // Find last invoice for this customer
+        $lastInvoiceForThisVendor = VendorInvoice::where('vendor_id', '=', $request->vendor_id)->orderBy('id', 'desc')->first();
+
+        $newTotal = $lastInvoiceForThisVendor->total - $amount;
+        $type = 'payment';
+
+        $paymentInvoice = new VendorInvoice();
+        $paymentInvoice->doc_no = $docNo;
+        $paymentInvoice->status = $status;
+        $paymentInvoice->credit = $amount;
+        $paymentInvoice->total = $newTotal;
+        $paymentInvoice->type = $type;
+        $paymentInvoice->vendor_id = $request->vendor_id;
+        $paymentInvoice->total = $newTotal;
+        $paymentInvoice->save();
+        
+
     }
 
 

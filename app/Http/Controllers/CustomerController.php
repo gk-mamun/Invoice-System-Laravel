@@ -40,15 +40,21 @@ class CustomerController extends Controller
         foreach($customers as $customer) {
             $html .= '
                 <tr>
-                    <th>'. $customer->code .'</th>
-                    <th>'. $customer->title .'</th>
-                    <th>'. $customer->email .'</th>
-                    <th>'. $customer->phone .'</th>
+                    <th><a href="/customers/'. $customer->id .'">'. $customer->code .'</a></th>
+                    <th><a href="/customers/'. $customer->id .'">'. $customer->title .'</a></th>
+                    <th><a href="/customers/'. $customer->id .'">'. $customer->email .'</a></th>
+                    <th><a href="/customers/'. $customer->id .'">'. $customer->phone .'</a></th>
                     <th>
-                        <a href="/customers/'. $customer->id .'" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>
-                        <button class="btn btn-success icon customer-update-btn" data-bs-toggle="modal" data-bs-target="#editCustomerModal" data-id="'. $customer->id .'"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger icon customer-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteCustomerModal" data-id="'. $customer->id .'"><i class="bi bi-trash-fill"></i></button>
-                    </th>
+                        <a href="/customers/'. $customer->id .'" class="btn btn-primary icon" data-bs-toggle="modal" data-bs-target="#"><i class="bi bi-eye"></i></a>';
+                        if(auth()->user()->role == 'admin') {
+                            $html .= '
+                                <button class="btn btn-success icon customer-update-btn" data-bs-toggle="modal" data-bs-target="#editCustomerModal" data-id="'. $customer->id .'"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-danger icon customer-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteCustomerModal" data-id="'. $customer->id .'"><i class="bi bi-trash-fill"></i></button>
+                            ';
+                        }
+                        
+
+                $html .= '</th>
                 </tr>
             ';
         }

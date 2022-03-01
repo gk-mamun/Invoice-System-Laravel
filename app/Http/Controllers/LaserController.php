@@ -55,10 +55,13 @@ class LaserController extends Controller
                     <div id="laser">
                         <div class="laser-header">
                             <div class="logo-container">
-                                <img src="../images/logo/company-logo.png" alt="">
+                                <img src="../images/logo/iata-logo.png" alt="">
                             </div>
                             <div class="company-info">
-                                <h1>World Wide Insurance</h1>
+                                <h1>MARJ AIR INTERNATIONAL</h1>
+                            </div>
+                            <div class="logo-container">
+                                <img src="../images/logo/company-logo.jpg" alt="">
                             </div>
                         </div>
                         <div id="laser-body">
@@ -111,10 +114,10 @@ class LaserController extends Controller
                                         <thead>
                                             <tr>
                                                 <th>Date</th>
-                                                <th>Doc No.</th>
+                                                <th>PNR</th>
                                                 <th>Ticket</th>
                                                 <th>Passenger</th>
-                                                <th>Sector</th>
+                                                <th>Status</th>
                                                 <th>Debit</th>
                                                 <th>Credit</th>
                                                 <th>Balance</th>
@@ -127,10 +130,10 @@ class LaserController extends Controller
                 $html .= '                  
                     <tr>
                         <td>'. date_format($invoice->created_at,"d/m/Y") .'</td>
-                        <td>'. $invoice->doc_no .'</td>
+                        <td>'. $invoice->pnr .'</td>
                         <td>'. $invoice->ticket .'</td>
                         <td>'. $invoice->passenger .'</td>
-                        <td>'. $invoice->sector .'</td>
+                        <td>'. $invoice->status .'</td>
                         <td>'. number_format($invoice->fare , 2) .'</td>
                         <td>'. number_format($invoice->credit , 2) .'</td>
                         <td>'. number_format($invoice->total , 2) .'</td>
